@@ -1,0 +1,147 @@
+/* 1. นำเข้าฟอนต์ Kanit ครบทุกน้ำหนักเพื่อความสวยงาม */
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600;700&display=swap');
+
+/* 2. บังคับใช้ Kanit ทุกองค์ประกอบ (ไทย-อังกฤษ) */
+* {
+  font-family: 'Kanit', sans-serif !important;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #fdf2f2; /* พื้นหลังขาวอมชมพูจางๆ */
+  color: #2D0A0A;
+  -webkit-font-smoothing: antialiased; /* ทำให้ตัวอักษรบนหน้าจอดูสมูทขึ้น */
+}
+
+.app-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 28px; /* ปรับโค้งมนขึ้นให้รับกับตัวอักษร Kanit */
+  box-shadow: 0 15px 40px rgba(128, 0, 0, 0.08); 
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+}
+
+/* หัวข้อใหญ่ */
+h1, h2, h3 {
+  font-weight: 600;
+  color: #800000;
+  margin-top: 0;
+}
+
+.sliders-container {
+  text-align: left;
+  margin: 20px 0;
+}
+
+.slider-group {
+  margin-bottom: 20px;
+}
+
+.slider-group label {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500; /* ปรับน้ำหนักให้ดูเบาแต่ชัดเจน */
+  font-size: 15px;
+  margin-bottom: 8px;
+  color: #4A0000;
+}
+
+/* ปรับสี Slider เป็นสีเลือดหมู */
+input[type=range] {
+  width: 100%;
+  accent-color: #800000; 
+  cursor: pointer;
+}
+
+/* ปุ่มกด */
+.primary-btn, .secondary-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600; /* เน้นตัวหนังสือในปุ่ม */
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.primary-btn {
+  background-color: #800000;
+  color: white;
+  box-shadow: 0 4px 12px rgba(128, 0, 0, 0.15);
+}
+
+.primary-btn:hover {
+  background-color: #5F0000;
+  transform: translateY(-2px); /* เพิ่มลูกเล่นขยับขึ้นตอน Hover */
+}
+
+.secondary-btn {
+  background-color: #f9f4f4;
+  color: #800000;
+  border: 1px solid #E5C0C0;
+}
+
+.secondary-btn:hover {
+  background-color: #F0E2E2;
+}
+
+.chart-container {
+  height: 350px; /* เพิ่มความสูงเผื่อตัวอักษรกราฟ */
+  margin: 25px 0;
+  padding: 10px;
+  background: #fff;
+  border-radius: 15px;
+}
+
+/* กล่องคำแนะนำ */
+.recommendation {
+  background-color: #FFF5F5;
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 25px;
+  color: #800000;
+  border-left: 6px solid #800000;
+  text-align: left;
+  line-height: 1.7; /* เพิ่มระยะบรรทัดให้อ่านง่ายขึ้น */
+}
+
+.recommendation strong {
+  font-weight: 600;
+}
+
+/* ฟังก์ชันการเขียนเป้าหมาย */
+.goal-input {
+  width: 100%;
+  padding: 14px;
+  border: 1.5px solid #E5C0C0;
+  border-radius: 12px;
+  font-size: 14px;
+  margin-top: 10px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.goal-input:focus {
+  border-color: #800000;
+}
+
+/* ส่วนของ Email Section ที่เพิ่มมา */
+.email-input-group {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

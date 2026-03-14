@@ -145,3 +145,43 @@ input[type=range] {
   flex-direction: column;
   gap: 10px;
 }
+
+/* --- CSS สำหรับตัวโหลดตอนรอ AI (App.css) --- */
+
+/* 1. ข้อความกะพริบ (Blinking Text) */
+.blinking-text {
+  animation: blinker 1.5s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* 2. ตัวหมุนๆ (CSS Spinner - lds-dual-ring) */
+/* เครดิต: https://loading.io/css/ */
+.lds-dual-ring {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 4px;
+  border-radius: 50%;
+  border: 4px solid #800000; /* สีแดงเข้มตามธีมพี่ */
+  border-color: #800000 transparent #800000 transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

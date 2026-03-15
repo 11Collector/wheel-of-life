@@ -275,3 +275,8 @@ input[type=range] {
 @keyframes blinker {
   50% { opacity: 0; }
 }
+.wheel-of-life-container {
+  border: 5px solid #800000; /* กำหนดขนาด, ประเภท, และสีของเส้นขอบ เช่น สีแดงเข้ม */
+  border-radius: 20px; /* กำหนดความโค้งมนของมุมให้เข้ากับสไตล์ของแอป */
+  padding: 20px; /* เพิ่มพื้นที่ว่างด้านในเพื่อให้องค์ประกอบไม่ชิดขอบเกินไป */
+}

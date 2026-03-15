@@ -268,7 +268,7 @@ function CarSimulation({ scores }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: '15px' }}>
                 <h3 style={{color: '#4A0000', margin: 0, fontSize: '15px'}}>🚗 ภาพจำลองสมรรถนะชีวิตของคุณ</h3>
                 <button onClick={shareVehicleImage} style={{ backgroundColor: '#fff', border: '1px solid #800000', color: '#800000', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}>
-                    📤 แชร์รูปรถ
+                    📤 แชร์
                 </button>
             </div>
             
@@ -575,7 +575,7 @@ function App() {
             
             <div style={{ position: 'relative', width: '100%', marginBottom: '20px', backgroundColor: '#ffffff', borderRadius: '24px', border: '2px solid #fff0f0', boxShadow: '0 10px 30px rgba(128, 0, 0, 0.06)', padding: '15px', boxSizing: 'border-box' }}>
               <button onClick={shareChartImage} style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 10, backgroundColor: '#fff5f5', border: '1px solid #ffcccc', color: '#800000', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold', transition: 'all 0.2s ease' }}>
-                  📤 แชร์รูปกราฟ
+                  📤 แชร์
               </button>
               <div className="chart-container" style={{ height: isMobile ? '350px' : '500px', marginTop: '5px' }}>
                  <Radar 
@@ -640,7 +640,7 @@ function App() {
                     {actionPlan && (
                       <div ref={aiResultRef} style={{ position: 'relative', backgroundColor: '#ffffff', padding: '15px 20px', margin: '15px -10px', borderRadius: '15px', border: '2px dashed #ffcccc' }}>
                         <button data-html2canvas-ignore onClick={saveAIResultImage} style={{ position: 'absolute', top: '15px', right: '15px', backgroundColor: '#fff', border: '1px solid #800000', color: '#800000', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}>
-                          💾 เซฟแผน 7 วัน
+                          💾
                         </button>
                         
                         {formatAnalysisText(actionPlan)}

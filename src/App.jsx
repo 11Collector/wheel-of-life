@@ -12,6 +12,7 @@ import {
   defaults 
 } from 'chart.js';
 import { Radar } from 'react-chartjs-2';
+import html2canvas from 'html2canvas';
 import './App.css';
 
 // --- 1. ตั้งค่า Global Chart.js ---
@@ -30,18 +31,8 @@ const whiteBackgroundPlugin = {
   }
 };
 
-// ✅ Component สำหรับ Footer
 const Footer = () => (
-  <div style={{ 
-    textAlign: 'center', 
-    padding: '20px 0', 
-    color: '#800000', 
-    fontSize: '12px', 
-    opacity: 0.7, 
-    fontWeight: '300', 
-    letterSpacing: '0.5px',
-    marginTop: 'auto'
-  }}>
+  <div style={{ textAlign: 'center', padding: '20px 0', color: '#800000', fontSize: '12px', opacity: 0.7, fontWeight: '300', letterSpacing: '0.5px', marginTop: 'auto' }}>
     Created by <strong>อัพสกิลกับฟุ้ย</strong>
   </div>
 );
@@ -49,21 +40,21 @@ const Footer = () => (
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, whiteBackgroundPlugin);
 
 const categoriesData = [
-  { label: '❤️ สุขภาพ (Health)', chartLabel: ['❤️ สุขภาพ', '(Health)'], color: '#D32F2F', popupTitle: '🤔 ฉันดูแลสุขภาพตัวเองดีแค่ไหน?', popupText: ['✅ ฉันมีพฤติกรรมการกินที่ดีต่อสุขภาพไหม?', '✅ ฉันออกกำลังกายสม่ำเสมอหรือเปล่า?', '✅ ฉันนอนหลับเพียงพอและมีพลังงานในแต่ละวันไหม?', '✅ ฉันมีปัญหาสุขภาพที่ควรแก้ไขหรือไม่?'], popupHint: '➡ ให้คะแนน 0-10 ตามสุขภาพของคุณในปัจจุบัน' },
-  { label: '💎 การเงิน (Salary / Financial)', chartLabel: ['💎 การเงิน', '(Salary/Financial)'], color: '#E65100', popupTitle: '🤔 ฉันบริหารเงินของตัวเองดีแค่ไหน?', popupText: ['✅ ฉันมีเงินออมและการลงทุนที่มั่นคงไหม?', '✅ ฉันสามารถรับมือกับค่าใช้จ่ายที่ไม่คาดคิดได้หรือไม่?', '✅ ฉันมีรายรับที่เพียงพอต่อการใช้ชีวิตที่ต้องการหรือเปล่า?', '✅ ฉันมีหนี้สินที่ควบคุมได้หรือไม่?'], popupHint: '➡ ให้คะแนน 0-10 ตามสถานะทางการเงินของคุณ' },
-  { label: '💼 การงานหรือธุรกิจ (Work / Business)', chartLabel: ['💼 การงาน/ธุรกิจ', '(Work/Business)'], color: '#00695C', popupTitle: '🤔 ฉันพอใจกับงานของตัวเองแค่ไหน?', popupText: ['✅ งานของฉันสอดคล้องกับเป้าหมายชีวิตของฉันไหม?', '✅ ฉันมีโอกาสเติบโตและพัฒนาทักษะในงานของฉันหรือไม่?', '✅ ฉันรู้สึกว่างานของฉันมีความหมายและสร้างคุณค่าไหม?', '✅ ฉันมีความสมดุลระหว่างชีวิตกับการทำงานหรือเปล่า?'], popupHint: '➡ ให้คะแนน 0-10 ตามความพึงพอใจในงานของคุณ' },
-  { label: '👨‍👩‍👧‍👦 ครอบครัว (Family)', chartLabel: ['👨‍👩‍👧‍👦 ครอบครัว', '(Family)'], color: '#AD1457', popupTitle: '🤔 ฉันมีความสัมพันธ์ที่ดีและเติมเต็มกับครอบครัวไหม?', popupText: ['✅ ฉันใช้เวลากับครอบครัวและคนที่ฉันรักเพียงพอหรือเปล่า?', '✅ ฉันให้การช่วยเหลือพวกเขาในยามจำเป็นได้หรือไม่?', '✅ ฉันสื่อสารและเข้าใจกับคนรอบข้างได้ดีหรือไม่?', '✅ ฉันรู้สึกว่ามีคนสนับสนุนและอยู่เคียงข้างฉันหรือเปล่า?'], popupHint: '➡ ให้คะแนน 0-10 ตามคุณภาพความสัมพันธ์ของคุณ' },
-  { label: '💑 ความสัมพันธ์เพื่อนฝูง (Relationship)', chartLabel: ['💑 เพื่อนฝูง', '(Relationship)'], color: '#4527A0', popupTitle: '🤔 ฉันมีความสัมพันธ์กับเพื่อนฝูงเป็นอย่างไร?', popupText: ['✅ ฉันมีเพื่อนที่สามารถพึ่งพาและไว้ใจได้หรือไม่?', '✅ ฉันมีการสื่อสารและใช้เวลากับเพื่อนอย่างสม่ำเสมอหรือไม่?', '✅ เวลาที่ฉันอยู่กับเพื่อน ฉันรู้สึกเติมเต็มและเป็นตัวเองได้หรือเปล่า?', '✅ เพื่อนของฉันเป็นพลังบวกและช่วยให้ฉันเติบโตขึ้นหรือไม่?'], popupHint: '➡ ให้คะแนน 0-10 ตามคุณภาพความสัมพันธ์เพื่อนฝูง' },
-  { label: '💡 พัฒนาตนเอง (Personal Growth)', chartLabel: ['💡 พัฒนาตนเอง', '(Personal Growth)'], color: '#BF360C', popupTitle: '🤔 ฉันให้ความสำคัญกับการเรียนรู้และพัฒนาตัวเองไหม?', popupText: ['✅ ฉันได้เรียนรู้สิ่งใหม่ ๆ อย่างต่อเนื่องหรือไม่?', '✅ ฉันมีเป้าหมายหรือทิศทางในการพัฒนาตัวเองไหม?', '✅ ฉันได้ออกจากคอมฟอร์ตโซนเพื่อเติบโตหรือเปล่า?', '✅ ฉันมีทัศนคติที่ดีต่อความเปลี่ยนแปลงและการพัฒนาไหม?'], popupHint: '➡ ให้คะแนน 0-10 ตามการเติบโตของตัวเอง' },
-  { label: '🧘‍♀️ พัฒนาจิตใจ (Spirituality)', chartLabel: ['🧘‍♀️ พัฒนาจิตใจ', '(Spirituality)'], color: '#37474F', popupTitle: '🤔 ฉันมีสภาพจิตใจเป็นอย่างไร?', popupText: ['✅ ฉันสามารถจัดการกับความเครียดและอารมณ์เชิงลบได้ดีแค่ไหน?', '✅ ฉันใช้เวลากับตัวเองเพื่อสะท้อนความคิด ฝึกสติ หรือฝึกสมาธิหรือไม่?', '✅ ฉันสามารถให้อภัยตัวเองและผู้อื่นได้หรือเปล่า?', '✅ ฉันรู้สึกขอบคุณสิ่งต่างๆ ในชีวิตและมองโลกในแง่บวกหรือไม่?'], popupHint: '➡ ให้คะแนน 0-10 ตามสภาพจิตใจของคุณ' },
-  { label: '🌏 ช่วยเหลือสังคม (Social & Contribution)', chartLabel: ['🌏 ช่วยเหลือสังคม', '(Contribution)'], color: '#1565C0', popupTitle: '🤔 ฉันได้ทำสิ่งดีๆ เพื่อคนอื่นและสังคมอะไรบ้างไหม?', popupText: ['✅ ฉันมีส่วนร่วมในการช่วยเหลือหรือทำประโยชน์ให้ผู้อื่นบ้างหรือไม่?', '✅ ฉันมีเวลาหรือทรัพยากรที่แบ่งปันให้กับสังคม เช่น การบริจาค หรือจิตอาสาหรือไม่?', '✅ ฉันช่วยเหลือเพื่อน ครอบครัว หรือคนรอบตัวโดยไม่หวังผลตอบแทนหรือเปล่า?', '✅ ฉันรู้สึกว่าตัวเองมีคุณค่าต่อสังคมและสร้างผลกระทบที่ดีให้กับโลกหรือไม่?'], popupHint: '➡ ให้คะแนน 0-10 ตามความพึงพอใจในตัวคุณเองต่อสังคม' }
+  { label: '❤️ สุขภาพ', chartLabel: ['❤️ สุขภาพ'], color: '#D32F2F', popupTitle: '🤔 ฉันดูแลสุขภาพตัวเองดีแค่ไหน?', popupText: ['✅ ฉันมีพฤติกรรมการกินที่ดีต่อสุขภาพไหม?', '✅ ฉันออกกำลังกายสม่ำเสมอหรือเปล่า?', '✅ ฉันนอนหลับเพียงพอและมีพลังงานในแต่ละวันไหม?', '✅ ฉันมีปัญหาสุขภาพที่ควรแก้ไขหรือไม่?'], popupHint: '➡ ให้คะแนน 0-10 ตามสุขภาพของคุณในปัจจุบัน' },
+  { label: '💎 การเงิน', chartLabel: ['💎 การเงิน'], color: '#E65100', popupTitle: '🤔 ฉันบริหารเงินของตัวเองดีแค่ไหน?', popupText: ['✅ ฉันมีเงินออมและการลงทุนที่มั่นคงไหม?', '✅ ฉันสามารถรับมือกับค่าใช้จ่ายที่ไม่คาดคิดได้หรือไม่?', '✅ ฉันมีรายรับที่เพียงพอต่อการใช้ชีวิตที่ต้องการหรือเปล่า?', '✅ ฉันมีหนี้สินที่ควบคุมได้หรือไม่?'], popupHint: '➡ ให้คะแนน 0-10 ตามสถานะทางการเงินของคุณ' },
+  { label: '💼 การงานหรือธุรกิจ', chartLabel: ['💼 การงาน'], color: '#00695C', popupTitle: '🤔 ฉันพอใจกับงานของตัวเองแค่ไหน?', popupText: ['✅ งานของฉันสอดคล้องกับเป้าหมายชีวิตของฉันไหม?', '✅ ฉันมีโอกาสเติบโตและพัฒนาทักษะในงานของฉันหรือไม่?', '✅ ฉันรู้สึกว่างานของฉันมีความหมายและสร้างคุณค่าไหม?', '✅ ฉันมีความสมดุลระหว่างชีวิตกับการทำงานหรือเปล่า?'], popupHint: '➡ ให้คะแนน 0-10 ตามความพึงพอใจในงานของคุณ' },
+  { label: '👨‍👩‍👧‍👦 ครอบครัว', chartLabel: ['👨‍👩‍👧‍👦 ครอบครัว'], color: '#AD1457', popupTitle: '🤔 ฉันมีความสัมพันธ์ที่ดีและเติมเต็มกับครอบครัวไหม?', popupText: ['✅ ฉันใช้เวลากับครอบครัวและคนที่ฉันรักเพียงพอหรือเปล่า?', '✅ ฉันให้การช่วยเหลือพวกเขาในยามจำเป็นได้หรือไม่?', '✅ ฉันสื่อสารและเข้าใจกับคนรอบข้างได้ดีหรือไม่?', '✅ ฉันรู้สึกว่ามีคนสนับสนุนและอยู่เคียงข้างฉันหรือเปล่า?'], popupHint: '➡ ให้คะแนน 0-10 ตามคุณภาพความสัมพันธ์ของคุณ' },
+  { label: '💑 ความสัมพันธ์เพื่อนฝูง', chartLabel: ['💑 เพื่อนฝูง'], color: '#4527A0', popupTitle: '🤔 ฉันมีความสัมพันธ์กับเพื่อนฝูงเป็นอย่างไร?', popupText: ['✅ ฉันมีเพื่อนที่สามารถพึ่งพาและไว้ใจได้หรือไม่?', '✅ ฉันมีการสื่อสารและใช้เวลากับเพื่อนอย่างสม่ำเสมอหรือไม่?', '✅ เวลาที่ฉันอยู่กับเพื่อน ฉันรู้สึกเติมเต็มและเป็นตัวเองได้หรือเปล่า?', '✅ เพื่อนของฉันเป็นพลังบวกและช่วยให้ฉันเติบโตขึ้นหรือไม่?'], popupHint: '➡ ให้คะแนน 0-10 ตามคุณภาพความสัมพันธ์เพื่อนฝูง' },
+  { label: '💡 พัฒนาตนเอง', chartLabel: ['💡 พัฒนาตนเอง'], color: '#BF360C', popupTitle: '🤔 ฉันให้ความสำคัญกับการเรียนรู้และพัฒนาตัวเองไหม?', popupText: ['✅ ฉันได้เรียนรู้สิ่งใหม่ ๆ อย่างต่อเนื่องหรือไม่?', '✅ ฉันมีเป้าหมายหรือทิศทางในการพัฒนาตัวเองไหม?', '✅ ฉันได้ออกจากคอมฟอร์ตโซนเพื่อเติบโตหรือเปล่า?', '✅ ฉันมีทัศนคติที่ดีต่อความเปลี่ยนแปลงและการพัฒนาไหม?'], popupHint: '➡ ให้คะแนน 0-10 ตามการเติบโตของตัวเอง' },
+  { label: '🧘‍♀️ พัฒนาจิตใจ', chartLabel: ['🧘‍♀️ จิตใจ'], color: '#37474F', popupTitle: '🤔 ฉันมีสภาพจิตใจเป็นอย่างไร?', popupText: ['✅ ฉันสามารถจัดการกับความเครียดและอารมณ์เชิงลบได้ดีแค่ไหน?', '✅ ฉันใช้เวลากับตัวเองเพื่อสะท้อนความคิด ฝึกสติ หรือฝึกสมาธิหรือไม่?', '✅ ฉันสามารถให้อภัยตัวเองและผู้อื่นได้หรือเปล่า?', '✅ ฉันรู้สึกขอบคุณสิ่งต่างๆ ในชีวิตและมองโลกในแง่บวกหรือไม่?'], popupHint: '➡ ให้คะแนน 0-10 ตามสภาพจิตใจของคุณ' },
+  { label: '🌏 ช่วยเหลือสังคม', chartLabel: ['🌏 ช่วยสังคม'], color: '#1565C0', popupTitle: '🤔 ฉันได้ทำสิ่งดีๆ เพื่อคนอื่นและสังคมอะไรบ้างไหม?', popupText: ['✅ ฉันมีส่วนร่วมในการช่วยเหลือหรือทำประโยชน์ให้ผู้อื่นบ้างหรือไม่?', '✅ ฉันมีเวลาหรือทรัพยากรที่แบ่งปันให้กับสังคม เช่น การบริจาค หรือจิตอาสาหรือไม่?', '✅ ฉันช่วยเหลือเพื่อน ครอบครัว หรือคนรอบตัวโดยไม่หวังผลตอบแทนหรือเปล่า?', '✅ ฉันรู้สึกว่าตัวเองมีคุณค่าต่อสังคมและสร้างผลกระทบที่ดีให้กับโลกหรือไม่?'], popupHint: '➡ ให้คะแนน 0-10 ตามความพึงพอใจในตัวคุณเองต่อสังคม' }
 ];
 
 const categories = categoriesData.map(item => item.chartLabel);
 const categoryColors = categoriesData.map(item => item.color);
 
-// ✅ จัดรูปแบบข้อความ AI และทำให้ Checklist กดได้
-const formatAnalysisText = (text, checkedDays, toggleCheckDay) => {
+// ✅ ตัวจัดรูปแบบข้อความ AI
+const formatAnalysisText = (text) => {
   if (!text) return null;
 
   return text.split('\n').map((line, index) => {
@@ -71,8 +62,7 @@ const formatAnalysisText = (text, checkedDays, toggleCheckDay) => {
     if (trimmedLine === '') return <div key={index} style={{ height: '8px' }}></div>;
 
     const isHeaderLine = trimmedLine.match(/^(📌|💡|📅|🔥)/);
-    // ✅ ดักจับข้อความที่เป็นแผน Day 1, Day 2
-    const isDayTask = trimmedLine.match(/^-\s*(Day|วันที่)/i);
+    const isListItem = trimmedLine.startsWith('-');
     
     let contentToProcess = trimmedLine;
     let headerElement = null;
@@ -83,13 +73,13 @@ const formatAnalysisText = (text, checkedDays, toggleCheckDay) => {
         const headerPart = trimmedLine.substring(0, colonIndex + 1);
         contentToProcess = trimmedLine.substring(colonIndex + 1).trim();
         headerElement = (
-          <div style={{ marginTop: '16px', marginBottom: '6px', paddingBottom: '4px', borderBottom: '1px dashed #ffcccc', color: '#800000', fontSize: '14px', fontWeight: '700', textAlign: 'left' }}>
+          <div style={{ marginTop: '16px', marginBottom: '8px', paddingBottom: '4px', borderBottom: '1px dashed #ffcccc', color: '#800000', fontSize: '15px', fontWeight: '700', textAlign: 'left' }}>
             {headerPart.replace(/\*\*/g, '')}
           </div>
         );
       } else {
         return (
-          <div key={index} style={{ marginTop: '16px', marginBottom: '6px', paddingBottom: '4px', borderBottom: '1px dashed #ffcccc', color: '#800000', fontSize: '14px', fontWeight: '700', textAlign: 'left' }}>
+          <div key={index} style={{ marginTop: '16px', marginBottom: '8px', paddingBottom: '4px', borderBottom: '1px dashed #ffcccc', color: '#800000', fontSize: '15px', fontWeight: '700', textAlign: 'left' }}>
             {trimmedLine.replace(/\*\*/g, '')}
           </div>
         );
@@ -100,51 +90,18 @@ const formatAnalysisText = (text, checkedDays, toggleCheckDay) => {
       const parts = textToRender.split('**');
       return parts.map((part, i) =>
         i % 2 === 1 ? (
-          <span key={i} style={{ color: '#800000', backgroundColor: '#fff0f0', padding: '1px 5px', borderRadius: '5px', fontWeight: '600', margin: '0 2px', display: 'inline-block', lineHeight: '1.2' }}>{part}</span>
+          <span key={i} style={{ color: '#800000', backgroundColor: '#fff0f0', padding: '1px 6px', borderRadius: '5px', fontWeight: '600', margin: '0 2px', display: 'inline-block', lineHeight: '1.2' }}>{part}</span>
         ) : (
           <span key={i} style={{ fontWeight: '300' }}>{part}</span>
         )
       );
     };
 
-    // ✅ ถ้าย่อหน้านั้นคือภารกิจ 7 วัน ให้โชว์เป็น Checklist กล่องนูนๆ
-    if (isDayTask) {
-        const taskText = trimmedLine.replace(/^-\s*/, ''); // ตัดเครื่องหมาย - ขีดหน้าออก
-        const isChecked = checkedDays[taskText] || false;
-        
-        return (
-            <div key={index} onClick={() => toggleCheckDay(taskText)} style={{ 
-                display: 'flex', 
-                alignItems: 'flex-start', 
-                marginBottom: '10px', 
-                cursor: 'pointer',
-                backgroundColor: isChecked ? '#f9f9f9' : '#ffffff',
-                padding: '12px',
-                borderRadius: '12px',
-                border: isChecked ? '1px solid #eee' : '1px solid #ffcccc',
-                boxShadow: isChecked ? 'none' : '0 4px 6px rgba(128,0,0,0.05)',
-                transition: 'all 0.2s ease',
-                textAlign: 'left'
-            }}>
-                <input 
-                    type="checkbox" 
-                    checked={isChecked} 
-                    readOnly 
-                    style={{ marginTop: '3px', marginRight: '12px', accentColor: '#800000', transform: 'scale(1.3)', cursor: 'pointer' }} 
-                />
-                <div style={{ textDecoration: isChecked ? 'line-through' : 'none', color: isChecked ? '#aaa' : '#444', fontSize: '13px', lineHeight: '1.6', flex: 1 }}>
-                    {renderContent(taskText)}
-                </div>
-            </div>
-        );
-    }
-
-    const isListItem = trimmedLine.startsWith('-');
     return (
       <div key={index} style={{ textAlign: 'left' }}>
         {headerElement}
         {contentToProcess && (
-          <div style={{ marginBottom: '5px', paddingLeft: isListItem ? '12px' : '0', lineHeight: '1.7', fontSize: '12px', color: '#444' }}>
+          <div style={{ marginBottom: '8px', paddingLeft: isListItem ? '15px' : '0', lineHeight: '1.7', fontSize: '13px', color: '#444' }}>
             {renderContent(contentToProcess)}
           </div>
         )}
@@ -192,7 +149,6 @@ function Dashboard({ onBack }) {
   );
 }
 
-// ✅ Component จำลองรถ
 function CarSimulation({ scores }) {
     const maxScore = Math.max(...scores);
     const minScore = Math.min(...scores);
@@ -230,7 +186,7 @@ function CarSimulation({ scores }) {
         shakeIntensity = 2; 
         statusColor = "#F4A261"; 
         message = "🚧 รถวิ่งกะเผลกเล็กน้อย";
-        explanation = "ชีวิตช่วงนี้อาจจะรู้สึกลุ่มๆ ดอนๆ ไปสักนิดครับ เหมือนรถที่ยางอ่อนไปข้างนึง เพราะมีบางด้านที่คุณให้ความสำคัญมาก แต่ดันลืมดูแลบางด้านไป ลองดึงด้านที่อ่อนแอขึ้นมาสักนิด จะช่วยให้ชีวิตขับเคลื่อนได้สมูทขึ้นเยอะเลยครับ";
+        explanation = "ชีวิตช่วงนี้อาจระรู้สึกลุ่มๆ ดอนๆ ไปสักนิดครับ เหมือนรถที่ยางอ่อนไปข้างนึง เพราะมีบางด้านที่คุณให้ความสำคัญมาก แต่ดันลืมดูแลบางด้านไป ลองดึงด้านที่อ่อนแอขึ้นมาสักนิด จะช่วยให้ชีวิตขับเคลื่อนได้สมูทขึ้นเยอะเลยครับ";
         vehicleEmoji = "🛻";
         speedAnimation = "0.8s";
     } else {
@@ -277,7 +233,6 @@ function CarSimulation({ scores }) {
       ctx.textAlign = "center";
       ctx.fillText("สมรรถนะชีวิตของฉันคือ...", canvas.width / 2, 70);
 
-      // กลับด้านอีโมจิในรูปภาพ
       ctx.font = "140px 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif";
       ctx.save();
       ctx.translate(canvas.width / 2, 240);
@@ -331,17 +286,15 @@ function CarSimulation({ scores }) {
     );
 }
 
-// --- 3. Main App Component ---
 function App() {
   const chartRef = useRef(null);
+  const aiResultRef = useRef(null); 
+  
   const [step, setStep] = useState('home'); 
   const [currentScores, setCurrentScores] = useState(Array(8).fill(5));
   const [targetScores, setTargetScores] = useState(Array(8).fill(5));
   const [selectedFocusAreas, setSelectedFocusAreas] = useState([]);
   const [showInfoPopup, setShowInfoPopup] = useState(null);
-  
-  // ✅ เก็บ State ของ Checklist แต่ละวัน
-  const [checkedDays, setCheckedDays] = useState({});
 
   const [email, setEmail] = useState('');
   const [futureGoal, setFutureGoal] = useState('');
@@ -355,11 +308,6 @@ function App() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  // ✅ ฟังก์ชันติ๊กถูก Checklist
-  const toggleCheckDay = (task) => {
-      setCheckedDays(prev => ({ ...prev, [task]: !prev[task] }));
-  };
 
   const handleScoreChange = (type, index, value) => {
     const val = parseInt(value);
@@ -396,7 +344,7 @@ function App() {
     const targetText = categoriesData.map((item, i) => `${item.label}: ${targetScores[i]}/10`).join(", ");
     const focusText = selectedFocusAreas.length > 0 ? selectedFocusAreas.map(i => categoriesData[i].label).join(", ") : "ไม่ได้ระบุเป็นพิเศษ";
 
-    const prompt = `คุณคือคนที่ฉลาดและเชี่ยวชาญการใช้ชีวิตทั้ง 8 ด้าน เน้นคุยแบบทางการ แต่ไม่ใช่ศัพท์ยากๆ พร้อมมีความรู้เชิงปรัชญา (Life Coach & Business Mentor) สไตล์การพูดคือเป็นกันเอง อบอุ่น จริงใจ ให้กำลังใจ
+    const prompt = `คุณคือเพื่อนสนิท ที่ฉลาดและมีความรู้เชิงลึกทั้ง 8 ด้านเป็นสไตล์ที่ปรึกษาอารมณ์จิตแพทย์ สไตล์การพูดคือเป็นกันเอง อบอุ่น จริงใจ ให้กำลังใจ ไม่มีลงท้ายว่า จ๊ะ คะ เรียกแทนคนนั้นว่าคุณ
 วิเคราะห์คะแนน Wheel of Life ของเพื่อนคุณ: ปัจจุบัน ${currentText}, เป้าหมาย 1 ปี ${targetText}
 เป้าหมาย 1 ปีที่เพื่อนอยากทำให้สำเร็จคือ: ${futureGoal}
 **สิ่งที่เพื่อนเลือกโฟกัสเป็นพิเศษในปีนี้คือ:** [${focusText}]
@@ -417,6 +365,25 @@ function App() {
     } catch (error) { alert("AI ผิดพลาด ลองใหม่อีกครั้งนะครับ"); } finally { setIsAnalyzing(false); }
   };
 
+  const saveAIResultImage = async () => {
+    if (!aiResultRef.current) return;
+    try {
+      const canvas = await html2canvas(aiResultRef.current, {
+        scale: 2, 
+        backgroundColor: '#ffffff', 
+        useCORS: true
+      });
+      const image = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = image;
+      link.download = "my-7-day-plan.png";
+      link.click();
+    } catch (error) {
+      console.error("Error saving image:", error);
+      alert("เกิดข้อผิดพลาดในการเซฟรูปครับ");
+    }
+  };
+
   const shareChartImage = async () => {
     if (!chartRef.current) return;
     const canvas = chartRef.current.canvas;
@@ -431,7 +398,7 @@ function App() {
     tCtx.font = "bold 26px Kanit";
     tCtx.fillStyle = "#800000";
     tCtx.textAlign = "center";
-    tCtx.fillText("Wheel Of Life Analysis", tempCanvas.width / 2, 50);
+    tCtx.fillText("Wheel Of Life Result", tempCanvas.width / 2, 50);
 
     tCtx.drawImage(canvas, 20, 80);
     
@@ -466,7 +433,6 @@ function App() {
       {step === 'home' && (
           <div className="card" style={{ padding: '40px 20px' }}>
             
-            {/* ✅ ลบ <h1> ทิ้ง แล้วใส่ <img> โลโก้แทน ปรับขนาดให้พอดีจอ */}
             <img 
               src="/logo-wheel.png" 
               alt="Wheel Of Life" 
@@ -479,8 +445,7 @@ function App() {
             />
 
             <p style={{ fontSize: '15px', lineHeight: '1.6', color: '#555', marginBottom: '25px' }}>ประเมินชีวิตปัจจุบัน และตั้งเป้าหมายอัปสกิลชีวิตในอีก 1 ปีข้างหน้า</p>
-            {/* ✅ Reset ค่า Checklist ตอนเริ่มใหม่ */}
-            <button className="primary-btn" style={{ padding: '14px 30px', fontSize: '16px' }} onClick={() => { setStep('assess_current'); setCurrentScores(Array(8).fill(5)); setTargetScores(Array(8).fill(5)); setSelectedFocusAreas([]); setFutureGoal(""); setAiAnalysis(""); setCheckedDays({}); }}>เริ่มประเมิน</button>
+            <button className="primary-btn" style={{ padding: '14px 30px', fontSize: '16px' }} onClick={() => { setStep('assess_current'); setCurrentScores(Array(8).fill(5)); setTargetScores(Array(8).fill(5)); setSelectedFocusAreas([]); setFutureGoal(""); setAiAnalysis(""); }}>เริ่มประเมิน</button>
           </div>
         )}
 
@@ -602,13 +567,17 @@ function App() {
 
         {step === 'result' && (
           <div className="card" style={{ position: 'relative', paddingBottom: '60px' }}>
-            <h2 style={{ fontSize: '30px', marginBottom: '20px' }}>Wheel Of Life Analysis</h2>
+            <img 
+              src="/logo-analysis.png" 
+              alt="Wheel Of Life Analysis" 
+              style={{ width: '100%', maxWidth: '400px', display: 'block', margin: '0 auto 20px auto' }} 
+            />
             
             <div style={{ position: 'relative', width: '100%', marginBottom: '20px', backgroundColor: '#ffffff', borderRadius: '24px', border: '2px solid #fff0f0', boxShadow: '0 10px 30px rgba(128, 0, 0, 0.06)', padding: '15px', boxSizing: 'border-box' }}>
               <button onClick={shareChartImage} style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 10, backgroundColor: '#fff5f5', border: '1px solid #ffcccc', color: '#800000', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold', transition: 'all 0.2s ease' }}>
                   📤 แชร์รูปกราฟ
               </button>
-              <div className="chart-container" style={{ height: isMobile ? '300px' : '400px', marginTop: '15px' }}>
+              <div className="chart-container" style={{ height: isMobile ? '350px' : '500px', marginTop: '5px' }}>
                  <Radar 
                     ref={chartRef} 
                     data={{
@@ -620,9 +589,11 @@ function App() {
                     }} 
                     options={{ 
                       maintainAspectRatio: false, 
-                      layout: { padding: isMobile ? 20 : 35 }, 
+                      // ✅ ปรับ layout padding เป็น 0 เพื่อให้กราฟขยายชิดขอบ container มากขึ้น
+                      layout: { padding: 0 }, 
                       plugins: { legend: { display: true, position: 'bottom', labels: { usePointStyle: true, font: { family: 'Kanit', size: 11 } } } },
-                      scales: { r: { min: 0, max: 10, beginAtZero: true, ticks: { display: false }, pointLabels: { padding: 8, font: { family: 'Kanit', size: isMobile ? 10 : 12, weight: '600' }, color: (context) => categoryColors[context.index] } } } 
+                      // ✅ ลด padding ของ labels ลงเล็กน้อย และปรับขนาด font เพื่อให้ไม่ตกขอบเวลาขยายครับ
+                      scales: { r: { min: 0, max: 10, beginAtZero: true, ticks: { display: false }, pointLabels: { padding: 3, font: { family: 'Kanit', size: isMobile ? 11 : 13, weight: '600' }, color: (context) => categoryColors[context.index] } } } 
                     }} 
                   />
               </div>
@@ -641,19 +612,53 @@ function App() {
               )}
             </div>
 
-            {aiAnalysis && (
-              <div className="ai-result-section">
-                <div className="recommendation" style={{ marginTop: '20px', textAlign: 'left', backgroundColor: '#fff', border: '1px solid #eee', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', padding: '20px', borderRadius: '15px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
-                    <strong style={{ color: '#800000', fontSize: '16px' }}>🪄 ผลวิเคราะห์ Exclusive</strong>
-                  </div>
-                  <div>
-                    {/* ✅ ส่ง State ของ Checklist เข้าไปในฟังก์ชัน */}
-                    {formatAnalysisText(aiAnalysis, checkedDays, toggleCheckDay)}
+            {aiAnalysis && (() => {
+              let beforePlan = aiAnalysis;
+              let actionPlan = "";
+              let afterPlan = "";
+
+              const planIndex = aiAnalysis.indexOf('📅');
+              const fireIndex = aiAnalysis.indexOf('🔥', planIndex);
+
+              if (planIndex !== -1) {
+                  beforePlan = aiAnalysis.substring(0, planIndex);
+                  actionPlan = fireIndex !== -1 ? aiAnalysis.substring(planIndex, fireIndex) : aiAnalysis.substring(planIndex);
+                  afterPlan = fireIndex !== -1 ? aiAnalysis.substring(fireIndex) : "";
+              }
+
+              return (
+                <div className="ai-result-section">
+                  <div className="recommendation" style={{ marginTop: '20px', textAlign: 'left', backgroundColor: '#fff', border: '1px solid #eee', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', padding: '20px', borderRadius: '15px' }}>
+                    <div style={{ marginBottom: '10px' }}>
+                      <strong style={{ color: '#800000', fontSize: '16px' }}>🪄 ผลวิเคราะห์ด้วย AI </strong>
+                    </div>
+                    
+                    <div>
+                      {formatAnalysisText(beforePlan)}
+                    </div>
+
+                    {actionPlan && (
+                      <div ref={aiResultRef} style={{ position: 'relative', backgroundColor: '#ffffff', padding: '15px 20px', margin: '15px -10px', borderRadius: '15px', border: '2px dashed #ffcccc' }}>
+                        <button data-html2canvas-ignore onClick={saveAIResultImage} style={{ position: 'absolute', top: '15px', right: '15px', backgroundColor: '#fff', border: '1px solid #800000', color: '#800000', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}>
+                          💾 เซฟแผน 7 วัน
+                        </button>
+                        
+                        {formatAnalysisText(actionPlan)}
+                        
+                        <div style={{ textAlign: 'center', marginTop: '15px', fontSize: '11px', color: '#aaa' }}>
+                          Created by อัพสกิลกับฟุ้ย
+                        </div>
+                      </div>
+                    )}
+
+                    <div>
+                      {formatAnalysisText(afterPlan)}
+                    </div>
+
                   </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             <div style={{ marginTop: '20px' }}>
               <input type="email" placeholder="กรอก Email เพื่อรับรีพอร์ตเก็บไว้..." value={email} onChange={(e) => setEmail(e.target.value)} className="goal-input" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '13px' }} />

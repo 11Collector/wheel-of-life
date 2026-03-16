@@ -149,7 +149,7 @@ function Dashboard({ onBack }) {
   );
 }
 
-function CarSimulation({ scores }) {
+function CarSimulation({ scores, isMobile }) {
     const maxScore = Math.max(...scores);
     const minScore = Math.min(...scores);
     const diff = maxScore - minScore; 
@@ -263,17 +263,19 @@ function CarSimulation({ scores }) {
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '10px', padding: '20px', backgroundColor: '#fafafa', borderRadius: '15px', border: '1px solid #eee', overflow: 'hidden', position: 'relative' }}>
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', width: '100%', boxSizing: 'border-box', padding: isMobile ? '20px' : '30px' }}>
             <style>{shakeAnimation}</style>
-            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: '15px' }}>
-                <h3 style={{color: '#4A0000', margin: 0, fontSize: '15px'}}>🚗 ภาพจำลองสมรรถนะชีวิตของคุณ</h3>
-                <button onClick={shareVehicleImage} style={{ backgroundColor: '#fff', border: '1px solid #800000', color: '#800000', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}>
+            
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: '15px' }}>
+                <h3 style={{color: '#4A0000', margin: 0, fontSize: 'clamp(15px, 4vw, 18px)', textAlign: 'left'}}>🚗 ภาพจำลองสมรรถนะชีวิตของคุณ</h3>
+                
+                <button onClick={shareVehicleImage} style={{ backgroundColor: '#fff', border: '1px solid #800000', color: '#800000', padding: '6px 14px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold', flexShrink: 0, whiteSpace: 'nowrap' }}>
                     📤 แชร์
                 </button>
             </div>
             
-            <div style={{ fontSize: '80px', height: '100px', display: 'flex', alignItems: 'flex-end', animation: `vehicleShake ${shakeIntensity > 0 ? 0.3 : 0}s infinite, vehicleBounce ${speedAnimation} infinite alternate ease-in-out` }}>
-                <span style={{ display: 'inline-block', transform: 'scaleX(-1)' }}>{vehicleEmoji}</span>
+            <div style={{ fontSize: 'clamp(60px, 15vw, 90px)', display: 'flex', alignItems: 'flex-end', animation: `vehicleShake ${shakeIntensity > 0 ? 0.3 : 0}s infinite, vehicleBounce ${speedAnimation} infinite alternate ease-in-out` }}>
+                <span style={{ display: 'inline-block', transform: 'scaleX(-1)', lineHeight: 1 }}>{vehicleEmoji}</span>
             </div>
 
             <div style={{ width: '100%', height: '6px', backgroundColor: '#555', marginTop: '10px', borderRadius: '3px', backgroundImage: 'linear-gradient(90deg, transparent 50%, #FFD166 50%)', backgroundSize: '30px 6px', backgroundRepeat: 'repeat-x', animation: `roadMoveFast ${speedAnimation} linear infinite` }}></div>
@@ -427,11 +429,11 @@ function App() {
   };
 
   return (
-    <div className="app-container" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px 0' }}>
+    <div className="app-container" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', boxSizing: 'border-box' }}>
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: isMobile ? '15px 0' : '20px 0', width: '100%' }}>
         
       {step === 'home' && (
-          <div className="card" style={{ padding: '40px 20px' }}>
+          <div className="card">
             
             <img 
               src="/logo-wheel.png" 
@@ -450,16 +452,16 @@ function App() {
         )}
 
         {step === 'assess_current' && (
-          <div className="card" style={{ maxWidth: '600px' }}>
+          <div className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
               <h2 style={{ margin: 0, fontSize: '18px' }}>ประเมินชีวิตปัจจุบัน</h2><span style={{ fontSize: '11px', backgroundColor: '#800000', color: 'white', padding: '3px 8px', borderRadius: '10px' }}>Step 1/2</span>
             </div>
             <p style={{fontSize:'13px', color:'#666', marginBottom:'20px'}}>ให้คะแนน (0-10) ความพึงพอใจในแต่ละด้าน ณ ปัจจุบัน</p>
             
-            <div className="sliders-container" style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: '5px', paddingBottom: '10px' }}>
+            <div className="sliders-grid">
               {categoriesData.map((item, index) => (
                 <div key={item.label} className="slider-group" style={{ 
-                  marginBottom: '15px', padding: '16px', backgroundColor: '#fefcfc', border: '1px solid #f0e6e6', borderRadius: '16px', boxShadow: '0 2px 8px rgba(128, 0, 0, 0.04)'
+                  padding: '16px', backgroundColor: '#fefcfc', border: '1px solid #f0e6e6', borderRadius: '16px', boxShadow: '0 2px 8px rgba(128, 0, 0, 0.04)'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap' }}>
                     <label style={{ fontWeight: 'bold', fontSize: '15px', margin: 0, color: '#333' }}>{item.label}</label>
@@ -473,12 +475,12 @@ function App() {
                 </div>
               ))}
             </div>
-            <button className="primary-btn" onClick={() => { setTargetScores([...currentScores]); setStep('assess_target'); }} style={{ marginTop: '20px' }}>ตั้งเป้าหมาย 1 ปีข้างหน้า</button>
+            <button className="primary-btn" onClick={() => { setTargetScores([...currentScores]); setStep('assess_target'); }} style={{ marginTop: '20px', width: '100%' }}>ตั้งเป้าหมาย 1 ปีข้างหน้า</button>
           </div>
         )}
 
         {step === 'assess_target' && (
-          <div className="card" style={{ maxWidth: '600px' }}>
+          <div className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
               <h2 style={{ margin: 0, fontSize: '18px' }}>เป้าหมายอัปสกิล 1 ปี</h2><span style={{ fontSize: '11px', backgroundColor: '#800000', color: 'white', padding: '3px 8px', borderRadius: '10px' }}>Step 2/2</span>
             </div>
@@ -490,11 +492,11 @@ function App() {
               3. <strong>พิมพ์เป้าหมายหลัก</strong> ที่อยากทำให้สำเร็จลงในกล่องข้อความ
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '20px' }}>
+            <div className="target-tags-wrapper">
               {categoriesData.map((item, index) => {
                 const isSelected = selectedFocusAreas.includes(index);
                 return (
-                  <button key={`btn-${index}`} onClick={() => {
+                  <button key={`btn-${index}`} className="target-tag-btn" onClick={() => {
                        if (isSelected) {
                           setSelectedFocusAreas(selectedFocusAreas.filter(i => i !== index));
                           const newTargets = [...targetScores]; newTargets[index] = currentScores[index]; setTargetScores(newTargets);
@@ -505,7 +507,12 @@ function App() {
                           } else { alert("คุณเลือกโฟกัสครบ 3 ด้านแล้วครับ โฟกัสทีละนิดชีวิตจะพุ่งไวกว่านะ! 🚀"); }
                        }
                     }}
-                    style={{ padding: '6px 10px', borderRadius: '15px', border: isSelected ? `2px solid ${item.color}` : '1px solid #ddd', backgroundColor: isSelected ? `${item.color}15` : '#fff', color: isSelected ? '#4A0000' : '#666', cursor: 'pointer', fontSize: '12px', fontWeight: isSelected ? 'bold' : 'normal', transition: 'all 0.2s', flexGrow: 1, textAlign: 'center' }}
+                    style={{ 
+                      border: isSelected ? `2px solid ${item.color}` : '1px solid #ddd', 
+                      backgroundColor: isSelected ? `${item.color}15` : '#fff', 
+                      color: isSelected ? '#4A0000' : '#666', 
+                      fontWeight: isSelected ? 'bold' : 'normal' 
+                    }}
                   >
                     {isSelected && '✅ '} {item.label.split(' ')[1]}
                   </button>
@@ -514,13 +521,15 @@ function App() {
             </div>
 
             {selectedFocusAreas.length > 0 ? (
-                <div className="sliders-container" style={{ maxHeight: '30vh', overflowY: 'auto', paddingRight: '5px', marginTop: '10px' }}>
-                  <h3 style={{fontSize: '13px', color: '#4A0000', marginBottom: '15px', borderBottom: '1px solid #eee', paddingBottom: '8px'}}>ปรับคะแนนเป้าหมายที่คุณเลือก 🎯</h3>
+                <div className="sliders-grid-target">
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <h3 style={{fontSize: '13px', color: '#4A0000', marginBottom: '5px', borderBottom: '1px solid #eee', paddingBottom: '8px'}}>ปรับคะแนนเป้าหมายที่คุณเลือก 🎯</h3>
+                  </div>
                   {selectedFocusAreas.map((index) => {
                     const item = categoriesData[index];
                     return (
                         <div key={`target-${index}`} className="slider-group" style={{ 
-                          marginBottom: '15px', padding: '16px', backgroundColor: '#fefcfc', border: '1px solid #f0e6e6', borderRadius: '16px', boxShadow: '0 2px 8px rgba(128, 0, 0, 0.04)'
+                          padding: '16px', backgroundColor: '#fefcfc', border: '1px solid #f0e6e6', borderRadius: '16px', boxShadow: '0 2px 8px rgba(128, 0, 0, 0.04)'
                         }}>
                           <label style={{ fontWeight: 'bold', fontSize: '15px', display: 'block', marginBottom: '10px', color: '#333' }}>{item.label} <span style={{fontSize:'11px', color:'#999', fontWeight:'normal'}}>(ปัจจุบัน: {currentScores[index]})</span></label>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
@@ -536,18 +545,18 @@ function App() {
                 <div style={{ textAlign: 'center', padding: '10px', color: '#999', fontSize: '13px' }}>👆 คลิกเลือกด้านบนเพื่อเริ่มตั้งเป้าหมาย</div>
             )}
             
-            <div style={{ marginTop: '10px', textAlign: 'left' }}>
+            <div style={{ marginTop: '20px', textAlign: 'left' }}>
               <label style={{ fontWeight: 'bold', fontSize: '13px', color: '#800000', display: 'block', marginBottom: '6px' }}>✍️ สิ่งที่อยากทำให้สำเร็จใน 1 ปีนี้ (เป้าหมายหลัก):</label>
-              <textarea className="goal-input" placeholder="เช่น อยากเพิ่มรายได้ 20k/เดือน, อยากลดน้ำหนัก 5 kg, หรืออยากมีเวลาว่างเสาร์-อาทิตย์..." value={futureGoal} onChange={(e) => setFutureGoal(e.target.value)} style={{ minHeight: '70px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '13px' }} />
+              <textarea className="goal-input" placeholder="เช่น อยากเพิ่มรายได้ 20k/เดือน, อยากลดน้ำหนัก 5 kg, หรืออยากมีเวลาว่างเสาร์-อาทิตย์..." value={futureGoal} onChange={(e) => setFutureGoal(e.target.value)} style={{ minHeight: '70px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '13px', boxSizing: 'border-box' }} />
             </div>
 
-            <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-              <button className="secondary-btn" onClick={() => setStep('assess_current')} style={{ flex: 1, padding: '10px' }}>กลับ</button>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '15px' }}>
+              <button className="secondary-btn" onClick={() => setStep('assess_current')} style={{ flex: '1 1 30%', padding: '10px' }}>กลับ</button>
               <button className="primary-btn" onClick={() => {
                     if(selectedFocusAreas.length === 0) { if(!window.confirm('คุณยังไม่ได้เลือกด้านที่จะโฟกัสเลย ต้องการวิเคราะห์ผลลัพธ์เลยหรือไม่?')) return; }
                     if(!futureGoal.trim()) { alert("อย่าลืมพิมพ์เป้าหมายหลักของคุณในช่องด้านล่างนะครับ AI จะได้ช่วยวางแผนให้ตรงจุดครับ"); return; }
                     setStep('result');
-                }} style={{ flex: 2, padding: '10px', opacity: (selectedFocusAreas.length > 0 && futureGoal.trim().length > 0) ? 1 : 0.7 }}
+                }} style={{ flex: '2 1 60%', padding: '10px', opacity: (selectedFocusAreas.length > 0 && futureGoal.trim().length > 0) ? 1 : 0.7 }}
               >สร้าง Wheel Of Life ของคุณ ✨</button>
             </div>
           </div>
@@ -566,18 +575,24 @@ function App() {
         )}
 
         {step === 'result' && (
-          <div className="card" style={{ position: 'relative', paddingBottom: '60px' }}>
+          // ✅ เปลี่ยนโครงสร้างใหม่เป็นแบบแยกกล่อง
+          <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px', boxSizing: 'border-box' }}>
+            
+            {/* 1. โลโก้ */}
             <img 
               src="/logo-analysis.png" 
               alt="Wheel Of Life Analysis" 
-              style={{ width: '100%', maxWidth: '400px', display: 'block', margin: '0 auto 20px auto' }} 
+              style={{ width: '100%', maxWidth: '300px', display: 'block', margin: '0 auto' }} 
             />
             
-            <div style={{ position: 'relative', width: '100%', marginBottom: '20px', backgroundColor: '#ffffff', borderRadius: '24px', border: '2px solid #fff0f0', boxShadow: '0 10px 30px rgba(128, 0, 0, 0.06)', padding: '15px', boxSizing: 'border-box' }}>
-              <button onClick={shareChartImage} style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 10, backgroundColor: '#fff5f5', border: '1px solid #ffcccc', color: '#800000', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold', transition: 'all 0.2s ease' }}>
+            {/* 2. กล่องกราฟ */}
+            <div className="card" style={{ position: 'relative', padding: isMobile ? '20px 10px' : '30px', boxSizing: 'border-box', width: '100%' }}>
+              <button onClick={shareChartImage} style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 10, backgroundColor: '#fff5f5', border: '1px solid #ffcccc', color: '#800000', padding: '6px 14px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}>
                   📤 แชร์
               </button>
-              <div className="chart-container" style={{ height: isMobile ? '350px' : '500px', marginTop: '5px' }}>
+              
+              {/* ✅ ใช้ aspectRatio คุมสัดส่วน ทำให้มันย่อขยายเป๊ะ 100% ไม่ยืดออกข้าง */}
+              <div style={{ position: 'relative', width: '100%', maxWidth: '600px', margin: '0 auto', aspectRatio: isMobile ? '1 / 1.15' : '1 / 1' }}>
                  <Radar 
                     ref={chartRef} 
                     data={{
@@ -589,96 +604,118 @@ function App() {
                     }} 
                     options={{ 
                       maintainAspectRatio: false, 
-                      // ✅ ปรับ layout padding เป็น 0 เพื่อให้กราฟขยายชิดขอบ container มากขึ้น
-                      layout: { padding: 0 }, 
-                      plugins: { legend: { display: true, position: 'bottom', labels: { usePointStyle: true, font: { family: 'Kanit', size: 11 } } } },
-                      // ✅ ลด padding ของ labels ลงเล็กน้อย และปรับขนาด font เพื่อให้ไม่ตกขอบเวลาขยายครับ
-                      scales: { r: { min: 0, max: 10, beginAtZero: true, ticks: { display: false }, pointLabels: { padding: 3, font: { family: 'Kanit', size: isMobile ? 11 : 13, weight: '600' }, color: (context) => categoryColors[context.index] } } } 
+                      responsive: true,
+                      layout: { padding: isMobile ? 10 : 20 }, 
+                      plugins: { legend: { display: true, position: 'bottom', labels: { usePointStyle: true, boxWidth: 10, font: { family: 'Kanit', size: 12 } } } },
+                      scales: { 
+                        r: { 
+                          min: 0, 
+                          max: 10, 
+                          beginAtZero: true, 
+                          ticks: { 
+                            display: true, 
+                            stepSize: 1, 
+                            color: '#800000', 
+                            backdropColor: 'rgba(255, 255, 255, 0.75)', 
+                            font: { family: 'Kanit', size: 10 } 
+                          }, 
+                          pointLabels: { 
+                            padding: 4, 
+                            font: { family: 'Kanit', size: isMobile ? 10 : 13, weight: '600' }, 
+                            color: (context) => categoryColors[context.index] 
+                          } 
+                        } 
+                      } 
                     }} 
                   />
               </div>
             </div>
 
-            <CarSimulation scores={currentScores} />
+            {/* 3. กล่องรูปรถ */}
+            <CarSimulation scores={currentScores} isMobile={isMobile} />
 
-            <div style={{ marginTop: '20px' }}>
-              {!isAnalyzing ? (
-                <button className="primary-btn" onClick={analyzeWithAI} style={{ width: '100%' }}>✨ AI วิเคราะห์ผล & จัดตาราง 7 วัน</button>
-              ) : (
-                <div style={{ textAlign: 'center', padding: '15px', backgroundColor: '#fff5f5', borderRadius: '15px', border: '2px dashed #f08080' }}>
-                   <div className="lds-dual-ring-small"></div>
-                   <p className="blinking-text" style={{ fontSize: '12px', color: '#800000', marginTop: '10px' }}>AI กำลังจัดตาราง 7 วันให้คุณ...</p>
-                </div>
-              )}
-            </div>
+            {/* 4. กล่องผลวิเคราะห์ AI และปุ่ม Action ต่างๆ */}
+            <div className="card" style={{ padding: isMobile ? '20px' : '40px', boxSizing: 'border-box', width: '100%' }}>
+              
+              {/* ปุ่มให้ AI วิเคราะห์ (จำกัดความกว้างไม่ให้ยืดเกินไป) */}
+              <div style={{ maxWidth: '450px', margin: '0 auto', width: '100%' }}>
+                {!isAnalyzing ? (
+                  <button className="primary-btn" onClick={analyzeWithAI} style={{ width: '100%' }}>✨ AI วิเคราะห์ผล & จัดตาราง 7 วัน</button>
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '15px', backgroundColor: '#fff5f5', borderRadius: '15px', border: '2px dashed #f08080' }}>
+                     <div className="lds-dual-ring-small"></div>
+                     <p className="blinking-text" style={{ fontSize: '12px', color: '#800000', marginTop: '10px' }}>AI กำลังจัดตาราง 7 วันให้คุณ...</p>
+                  </div>
+                )}
+              </div>
 
-            {aiAnalysis && (() => {
-              let beforePlan = aiAnalysis;
-              let actionPlan = "";
-              let afterPlan = "";
+              {/* กล่องผลวิเคราะห์ AI (ให้กว้างเต็ม Card) */}
+              {aiAnalysis && (() => {
+                let beforePlan = aiAnalysis;
+                let actionPlan = "";
+                let afterPlan = "";
 
-              const planIndex = aiAnalysis.indexOf('📅');
-              const fireIndex = aiAnalysis.indexOf('🔥', planIndex);
+                const planIndex = aiAnalysis.indexOf('📅');
+                const fireIndex = aiAnalysis.indexOf('🔥', planIndex);
 
-              if (planIndex !== -1) {
-                  beforePlan = aiAnalysis.substring(0, planIndex);
-                  actionPlan = fireIndex !== -1 ? aiAnalysis.substring(planIndex, fireIndex) : aiAnalysis.substring(planIndex);
-                  afterPlan = fireIndex !== -1 ? aiAnalysis.substring(fireIndex) : "";
-              }
+                if (planIndex !== -1) {
+                    beforePlan = aiAnalysis.substring(0, planIndex);
+                    actionPlan = fireIndex !== -1 ? aiAnalysis.substring(planIndex, fireIndex) : aiAnalysis.substring(planIndex);
+                    afterPlan = fireIndex !== -1 ? aiAnalysis.substring(fireIndex) : "";
+                }
 
-              return (
-                <div className="ai-result-section">
-                  <div className="recommendation" style={{ marginTop: '20px', textAlign: 'left', backgroundColor: '#fff', border: '1px solid #eee', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', padding: '20px', borderRadius: '15px' }}>
-                    <div style={{ marginBottom: '10px' }}>
-                      <strong style={{ color: '#800000', fontSize: '16px' }}>🪄 ผลวิเคราะห์ด้วย AI </strong>
-                    </div>
-                    
-                    <div>
-                      {formatAnalysisText(beforePlan)}
-                    </div>
-
-                    {actionPlan && (
-                      <div ref={aiResultRef} style={{ position: 'relative', backgroundColor: '#ffffff', padding: '15px 20px', margin: '15px -10px', borderRadius: '15px', border: '2px dashed #ffcccc' }}>
-                        <button data-html2canvas-ignore onClick={saveAIResultImage} style={{ position: 'absolute', top: '15px', right: '15px', backgroundColor: '#fff', border: '1px solid #800000', color: '#800000', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}>
-                          💾
-                        </button>
-                        
-                        {formatAnalysisText(actionPlan)}
-                        
-                        <div style={{ textAlign: 'center', marginTop: '15px', fontSize: '11px', color: '#aaa' }}>
-                          Created by อัพสกิลกับฟุ้ย
-                        </div>
+                return (
+                  <div className="ai-result-section" style={{ width: '100%', marginTop: '25px' }}>
+                    <div className="recommendation" style={{ textAlign: 'left', backgroundColor: '#fff', border: '1px solid #eee', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', padding: isMobile ? '20px' : '30px', borderRadius: '15px' }}>
+                      <div style={{ marginBottom: '10px' }}>
+                        <strong style={{ color: '#800000', fontSize: '18px' }}>🪄 ผลวิเคราะห์ด้วย AI </strong>
                       </div>
-                    )}
+                      
+                      <div>{formatAnalysisText(beforePlan)}</div>
 
-                    <div>
-                      {formatAnalysisText(afterPlan)}
+                      {actionPlan && (
+                        <div ref={aiResultRef} style={{ position: 'relative', backgroundColor: '#ffffff', padding: isMobile ? '15px' : '25px', margin: '20px 0', borderRadius: '15px', border: '2px dashed #ffcccc' }}>
+                          <button data-html2canvas-ignore onClick={saveAIResultImage} style={{ position: 'absolute', top: '15px', right: '15px', backgroundColor: '#fff', border: '1px solid #800000', color: '#800000', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}>
+                            💾
+                          </button>
+                          {formatAnalysisText(actionPlan)}
+                          <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '12px', color: '#aaa' }}>Created by อัพสกิลกับฟุ้ย</div>
+                        </div>
+                      )}
+
+                      <div>{formatAnalysisText(afterPlan)}</div>
                     </div>
+                  </div>
+                );
+              })()}
 
+              {/* ปุ่มกรอกอีเมลและกลับหน้าแรก (จำกัดความกว้างตรงกลาง) */}
+              <div style={{ maxWidth: '450px', margin: '25px auto 0', width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ width: '100%' }}>
+                  <input type="email" placeholder="กรอก Email เพื่อรับรีพอร์ตเก็บไว้..." value={email} onChange={(e) => setEmail(e.target.value)} className="goal-input" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '13px', boxSizing: 'border-box' }} />
+                  
+                  <div style={{ marginTop: '10px' }}>
+                      {!isSendingEmail ? (
+                        <button className="primary-btn" onClick={sendReportViaEmail} style={{ width: '100%', padding: '10px' }}>📧 ส่งรีพอร์ตเข้า Email</button>
+                      ) : (
+                        <div style={{ textAlign: 'center', padding: '10px', backgroundColor: '#fff5f5', borderRadius: '10px', border: '2px dashed #f08080' }}><div className="lds-dual-ring-small"></div><p className="blinking-text" style={{ fontSize: '12px', color: '#800000', margin: 0 }}>กำลังส่ง...</p></div>
+                      )}
                   </div>
                 </div>
-              );
-            })()}
 
-            <div style={{ marginTop: '20px' }}>
-              <input type="email" placeholder="กรอก Email เพื่อรับรีพอร์ตเก็บไว้..." value={email} onChange={(e) => setEmail(e.target.value)} className="goal-input" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '13px' }} />
-              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                  {!isSendingEmail ? (
-                    <button className="primary-btn" onClick={sendReportViaEmail} style={{ flex: 1, padding: '10px' }}>📧 ส่งรีพอร์ตเข้า Email</button>
-                  ) : (
-                    <div style={{ flex: 1, textAlign: 'center', padding: '10px', backgroundColor: '#fff5f5', borderRadius: '10px', border: '2px dashed #f08080' }}><div className="lds-dual-ring-small"></div><p className="blinking-text" style={{ fontSize: '12px', color: '#800000', margin: 0 }}>กำลังส่ง...</p></div>
-                  )}
+                <button className="secondary-btn" onClick={() => setStep('home')} style={{ width: '100%', padding: '10px' }}>กลับหน้าแรก</button>
               </div>
             </div>
-
-            <button className="secondary-btn" onClick={() => setStep('home')} style={{ marginTop: '10px', width: '100%', padding: '10px' }}>กลับหน้าแรก</button>
    
-            {/* ✅ ปุ่มติดตามอัพสกิลกับฟุ้ย มุมขวาล่าง */}
-            <a href="https://linktr.ee/upskillwithfuii" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', position: 'absolute', bottom: '15px', right: '15px' }}>
-              <button style={{ backgroundColor: '#fff', border: '1px solid #ddd', color: '#666', padding: '6px 12px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}>
-                📲 ติดตามอัพสกิลกับฟุ้ย
-              </button>
-            </a>
+            {/* 5. ปุ่มติดตามจัดตรงกลาง */}
+            <div style={{ textAlign: 'center', marginTop: '10px', marginBottom: '20px' }}>
+              <a href="https://linktr.ee/upskillwithfuii" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                <button style={{ backgroundColor: '#fff', border: '1px solid #ddd', color: '#666', padding: '8px 18px', borderRadius: '25px', fontSize: '13px', cursor: 'pointer', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '6px', justifyContent: 'center', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>
+                  📲 ติดตามอัพสกิลกับฟุ้ย
+                </button>
+              </a>
+            </div>
+
           </div>
         )}
       </div>

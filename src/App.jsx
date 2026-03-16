@@ -267,7 +267,7 @@ function CarSimulation({ scores, isMobile }) {
             <style>{shakeAnimation}</style>
             
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: '15px' }}>
-                <h3 style={{color: '#4A0000', margin: 0, fontSize: 'clamp(15px, 4vw, 18px)', textAlign: 'left'}}>🚗 ภาพจำลองสมรรถนะชีวิตของคุณ</h3>
+                <h3 style={{color: '#4A0000', margin: 0, fontSize: 'clamp(15px, 4vw, 18px)', textAlign: 'left'}}>🚗 ภาพจำลองสมรรถนะชีวิต</h3>
                 
                 <button onClick={shareVehicleImage} style={{ backgroundColor: '#fff', border: '1px solid #800000', color: '#800000', padding: '6px 14px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold', flexShrink: 0, whiteSpace: 'nowrap' }}>
                     📤 แชร์

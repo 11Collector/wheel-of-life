@@ -587,7 +587,9 @@ function App() {
             
             {/* 2. กล่องกราฟ */}
             <div className="card" style={{ position: 'relative', padding: isMobile ? '20px 10px' : '30px', boxSizing: 'border-box', width: '100%' }}>
-              <button onClick={shareChartImage} style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 10, backgroundColor: '#fff5f5', border: '1px solid #ffcccc', color: '#800000', padding: '6px 14px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}>
+              
+<h3 style={{color: '#4A0000', margin: 0, fontSize: 'clamp(15px, 4vw, 18px)', textAlign: 'left'}}>🛞 ภาพ Wheel Of Life ของคุณ</h3>
+<button onClick={shareChartImage} style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 10, backgroundColor: '#fff5f5', border: '1px solid #ffcccc', color: '#800000', padding: '6px 14px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}>
                   📤 แชร์
               </button>
               

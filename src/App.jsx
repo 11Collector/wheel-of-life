@@ -1,5 +1,7 @@
 import emailjs from '@emailjs/browser';
-import { db, collection, addDoc, serverTimestamp, getDocs, query, orderBy } from './firebase';
+import { db } from './firebase'; 
+import { collection, addDoc, serverTimestamp, getDocs, query, orderBy, doc, updateDoc } from 'firebase/firestore'; 
+
 import { useState, useEffect, useRef } from 'react';
 import {
   Chart as ChartJS,
@@ -40,7 +42,7 @@ const Footer = () => (
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, whiteBackgroundPlugin);
 
 const categoriesData = [
-  { label: '❤️ สุขภาพ', chartLabel: ['❤️ สุขภาพ'], color: '#D32F2F', popupTitle: '🤔 ฉันดูแลสุขภาพตัวเองดีแค่ไหน?', popupText: ['✅ ฉันมีพฤติกรรมการกินที่ดีต่อสุขภาพไหม?', '✅ ฉันออกกำลังกายสม่ำเสมอหรือเปล่า?', '✅ ฉันนอนหลับเพียงพอและมีพลังงานในแต่ละวันไหม?', '✅ ฉันมีปัญหาสุขภาพที่ควรแก้ไขหรือไม่?'], popupHint: '➡ ให้คะแนน 0-10 ตามสุขภาพของคุณในปัจจุบัน' },
+  { label: '❤️ สุขภาพ', chartLabel: ['❤️ สุขภาพ'], color: '#D32F2F', popupTitle: '🤔 ฉันดูแลสุขภาพตัวเองดีแค่ไหน?', popupText: ['✅ ฉันมีพฤติกรรมการกินที่ดีต่อสุขภาพไหม?', '✅ ฉันออกกำลังกายสม่ำเสมอหรือเปล่า?', '✅ ฉันนอนหลับเพียงพอและมีพลังงานในแต่ละวันไหม?', '✅ ฉันมีปัญสขภาพที่ควรแก้ไขหรือไม่?'], popupHint: '➡ ให้คะแนน 0-10 ตามสุขภาพของคุณในปัจจุบัน' },
   { label: '💎 การเงิน', chartLabel: ['💎 การเงิน'], color: '#E65100', popupTitle: '🤔 ฉันบริหารเงินของตัวเองดีแค่ไหน?', popupText: ['✅ ฉันมีเงินออมและการลงทุนที่มั่นคงไหม?', '✅ ฉันสามารถรับมือกับค่าใช้จ่ายที่ไม่คาดคิดได้หรือไม่?', '✅ ฉันมีรายรับที่เพียงพอต่อการใช้ชีวิตที่ต้องการหรือเปล่า?', '✅ ฉันมีหนี้สินที่ควบคุมได้หรือไม่?'], popupHint: '➡ ให้คะแนน 0-10 ตามสถานะทางการเงินของคุณ' },
   { label: '💼 การงานหรือธุรกิจ', chartLabel: ['💼 การงาน'], color: '#00695C', popupTitle: '🤔 ฉันพอใจกับงานของตัวเองแค่ไหน?', popupText: ['✅ งานของฉันสอดคล้องกับเป้าหมายชีวิตของฉันไหม?', '✅ ฉันมีโอกาสเติบโตและพัฒนาทักษะในงานของฉันหรือไม่?', '✅ ฉันรู้สึกว่างานของฉันมีความหมายและสร้างคุณค่าไหม?', '✅ ฉันมีความสมดุลระหว่างชีวิตกับการทำงานหรือเปล่า?'], popupHint: '➡ ให้คะแนน 0-10 ตามความพึงพอใจในงานของคุณ' },
   { label: '👨‍👩‍👧‍👦 ครอบครัว', chartLabel: ['👨‍👩‍👧‍👦 ครอบครัว'], color: '#AD1457', popupTitle: '🤔 ฉันมีความสัมพันธ์ที่ดีและเติมเต็มกับครอบครัวไหม?', popupText: ['✅ ฉันใช้เวลากับครอบครัวและคนที่ฉันรักเพียงพอหรือเปล่า?', '✅ ฉันให้การช่วยเหลือพวกเขาในยามจำเป็นได้หรือไม่?', '✅ ฉันสื่อสารและเข้าใจกับคนรอบข้างได้ดีหรือไม่?', '✅ ฉันรู้สึกว่ามีคนสนับสนุนและอยู่เคียงข้างฉันหรือเปล่า?'], popupHint: '➡ ให้คะแนน 0-10 ตามคุณภาพความสัมพันธ์ของคุณ' },
@@ -139,7 +141,12 @@ function Dashboard({ onBack }) {
             <thead><tr style={{ backgroundColor: '#800000', color: 'white' }}><th style={{ padding: '8px' }}>วันที่</th><th style={{ padding: '8px' }}>Email</th><th style={{ padding: '8px' }}>เป้าหมาย</th><th style={{ padding: '8px' }}>คะแนนเฉลี่ย</th></tr></thead>
             <tbody>
               {reports.map((report) => (
-                <tr key={report.id} style={{ borderBottom: '1px solid #eee' }}><td style={{ padding: '8px' }}>{report.timestamp?.toDate ? report.timestamp.toDate().toLocaleDateString('th-TH') : '-'}</td><td style={{ padding: '8px', fontWeight: 'bold' }}>{report.email}</td><td style={{ padding: '8px' }}>{report.goal?.substring(0, 40)}...</td><td style={{ padding: '8px', textAlign: 'center' }}>{report.currentScores ? (report.currentScores.reduce((a, b) => a + b, 0) / 8).toFixed(1) : '-'}</td></tr>
+                <tr key={report.id} style={{ borderBottom: '1px solid #eee' }}>
+                  <td style={{ padding: '8px' }}>{report.timestamp?.toDate ? report.timestamp.toDate().toLocaleDateString('th-TH') : '-'}</td>
+                  <td style={{ padding: '8px', fontWeight: 'bold' }}>{report.email || <span style={{color: '#aaa', fontWeight: 'normal', fontStyle: 'italic'}}>ไม่ระบุ</span>}</td>
+                  <td style={{ padding: '8px' }}>{report.goal?.substring(0, 40)}...</td>
+                  <td style={{ padding: '8px', textAlign: 'center' }}>{report.currentScores ? (report.currentScores.reduce((a, b) => a + b, 0) / 8).toFixed(1) : '-'}</td>
+                </tr>
               ))}
             </tbody>
           </table>
@@ -304,6 +311,7 @@ function App() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false); 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [reportDocId, setReportDocId] = useState(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -324,16 +332,55 @@ function App() {
     }
   };
 
+  // ✅ ฟังก์ชันใหม่: เซฟข้อมูลทันทีที่กด "สร้าง Wheel Of Life"
+  const handleGenerateResult = async () => {
+    if(selectedFocusAreas.length === 0) { if(!window.confirm('คุณยังไม่ได้เลือกด้านที่จะโฟกัสเลย ต้องการวิเคราะห์ผลลัพธ์เลยหรือไม่?')) return; }
+    if(!futureGoal.trim()) { alert("อย่าลืมพิมพ์เป้าหมายหลักของคุณในช่องด้านล่างนะครับ AI จะได้ช่วยวางแผนให้ตรงจุดครับ"); return; }
+    
+    // เปลี่ยนหน้าไปโชว์กราฟทันที (UX จะได้ไม่สะดุด)
+    setStep('result');
+
+    // เซฟลง Database เบื้องหลัง
+    try {
+      const docRef = await addDoc(collection(db, "user_reports"), { 
+        email: "", 
+        currentScores, 
+        targetScores, 
+        selectedFocusAreas, 
+        analysis: "", // ปล่อยว่างไว้ก่อน รอ AI มาเติม
+        goal: futureGoal, 
+        timestamp: serverTimestamp(), 
+        platform: 'upskillwheel_v2' 
+      });
+      setReportDocId(docRef.id);
+    } catch (dbError) {
+      console.error("Initial save error:", dbError);
+    }
+  };
+
   const sendReportViaEmail = async () => {
     if (!import.meta.env.VITE_EMAILJS_SERVICE_ID) return;
     if (!email) return alert("กรุณากรอก Email ก่อนครับ");
     setIsSendingEmail(true);
     try {
-      await addDoc(collection(db, "user_reports"), { email, currentScores, targetScores, selectedFocusAreas, analysis: aiAnalysis, goal: futureGoal, timestamp: serverTimestamp(), platform: 'upskillwheel_v2' });
+      if (reportDocId) {
+        // ✅ Double Save: อัปเดตทั้ง Email และ ผล AI ไปพร้อมกันเลย กันพลาด!
+        const reportRef = doc(db, "user_reports", reportDocId);
+        await updateDoc(reportRef, { 
+           email: email, 
+           analysis: aiAnalysis 
+        });
+      } else {
+        await addDoc(collection(db, "user_reports"), { email, currentScores, targetScores, selectedFocusAreas, analysis: aiAnalysis, goal: futureGoal, timestamp: serverTimestamp(), platform: 'upskillwheel_v2' });
+      }
+
       const templateParams = { to_email: email, analysis_result: aiAnalysis, user_goal: futureGoal, from_name: "อัพสกิลกับฟุ้ย" };
       await emailjs.send(import.meta.env.VITE_EMAILJS_SERVICE_ID, import.meta.env.VITE_EMAILJS_TEMPLATE_ID, templateParams, import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
       alert("🚀 ส่งรีพอร์ตเรียบร้อย! ลองเช็กใน Inbox นะครับ");
-    } catch (error) { alert("ระบบบันทึกข้อมูลแล้ว แต่การส่งเมลขัดข้องเล็กน้อยครับ"); } finally { setIsSendingEmail(false); }
+    } catch (error) { 
+      console.error(error);
+      alert("ระบบบันทึกข้อมูลแล้ว แต่การส่งเมลขัดข้องเล็กน้อยครับ"); 
+    } finally { setIsSendingEmail(false); }
   };
 
   const analyzeWithAI = async () => {
@@ -363,7 +410,17 @@ function App() {
     try {
       const response = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
       const data = await response.json();
-      setAiAnalysis(data.candidates[0].content.parts[0].text);
+      const generatedAnalysis = data.candidates[0].content.parts[0].text;
+      setAiAnalysis(generatedAnalysis);
+
+      // ✅ อัปเดตข้อมูลแถวเดิม เติมผล AI เข้าไป
+      if (reportDocId) {
+        try {
+          const reportRef = doc(db, "user_reports", reportDocId);
+          await updateDoc(reportRef, { analysis: generatedAnalysis });
+        } catch(e) { console.error("Update AI result error:", e); }
+      }
+
     } catch (error) { alert("AI ผิดพลาด ลองใหม่อีกครั้งนะครับ"); } finally { setIsAnalyzing(false); }
   };
 
@@ -447,15 +504,26 @@ function App() {
             />
 
             <p style={{ fontSize: '15px', lineHeight: '1.6', color: '#555', marginBottom: '25px' }}>ประเมินชีวิตปัจจุบัน และตั้งเป้าหมายอัปสกิลชีวิตในอีก 1 ปีข้างหน้า</p>
-            <button className="primary-btn" style={{ padding: '14px 30px', fontSize: '16px' }} onClick={() => { setStep('assess_current'); setCurrentScores(Array(8).fill(5)); setTargetScores(Array(8).fill(5)); setSelectedFocusAreas([]); setFutureGoal(""); setAiAnalysis(""); }}>เริ่มประเมิน</button>
+            <button className="primary-btn" style={{ padding: '14px 30px', fontSize: '16px' }} onClick={() => { setStep('assess_current'); setCurrentScores(Array(8).fill(5)); setTargetScores(Array(8).fill(5)); setSelectedFocusAreas([]); setFutureGoal(""); setAiAnalysis(""); setReportDocId(null); setEmail(""); }}>เริ่มประเมิน</button>
           </div>
         )}
 
         {step === 'assess_current' && (
           <div className="card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
-              <h2 style={{ margin: 0, fontSize: '18px' }}>ประเมินชีวิตปัจจุบัน</h2><span style={{ fontSize: '11px', backgroundColor: '#800000', color: 'white', padding: '3px 8px', borderRadius: '10px' }}>Step 1/2</span>
-            </div>
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    {/* ปุ่มลูกศรกลับหน้าแรก */}
+    <button 
+      onClick={() => setStep('home')} 
+      style={{ background: 'none', border: 'none', color: '#999', fontSize: '18px', cursor: 'pointer', padding: '0 5px 0 0' }}
+      title="กลับหน้าแรก"
+    >
+      ←
+    </button>
+    <h2 style={{ margin: 0, fontSize: '18px' }}>ประเมินชีวิตปัจจุบัน</h2>
+  </div>
+  <span style={{ fontSize: '11px', backgroundColor: '#800000', color: 'white', padding: '3px 8px', borderRadius: '10px' }}>Step 1/2</span>
+</div>
             <p style={{fontSize:'13px', color:'#666', marginBottom:'20px'}}>ให้คะแนน (0-10) ความพึงพอใจในแต่ละด้าน ณ ปัจจุบัน</p>
             
             <div className="sliders-grid">
@@ -481,9 +549,20 @@ function App() {
 
         {step === 'assess_target' && (
           <div className="card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
-              <h2 style={{ margin: 0, fontSize: '18px' }}>เป้าหมายอัปสกิล 1 ปี</h2><span style={{ fontSize: '11px', backgroundColor: '#800000', color: 'white', padding: '3px 8px', borderRadius: '10px' }}>Step 2/2</span>
-            </div>
+           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    {/* ปุ่มลูกศรกลับหน้าแรก */}
+    <button 
+      onClick={() => setStep('assess_current')} 
+      style={{ background: 'none', border: 'none', color: '#999', fontSize: '18px', cursor: 'pointer', padding: '0 5px 0 0' }}
+      title="กลับหน้าแรก"
+    >
+      ←
+    </button>
+    <h2 style={{ margin: 0, fontSize: '18px' }}>เป้าหมายอัพสกิล 1 ปี</h2>
+  </div>
+  <span style={{ fontSize: '11px', backgroundColor: '#800000', color: 'white', padding: '3px 8px', borderRadius: '10px' }}>Step 1/2</span>
+</div>
             
             <div style={{ backgroundColor: '#fffbe6', padding: '12px', borderRadius: '8px', borderLeft: '4px solid #ffcc00', marginBottom: '15px', marginTop: '10px', textAlign: 'left', fontSize: '12.5px', color: '#555', lineHeight: '1.5' }}>
               💡 <strong>Guideline การตั้งเป้าหมาย:</strong><br/>
@@ -546,17 +625,13 @@ function App() {
             )}
             
             <div style={{ marginTop: '20px', textAlign: 'left' }}>
-              <label style={{ fontWeight: 'bold', fontSize: '13px', color: '#800000', display: 'block', marginBottom: '6px' }}>✍️ สิ่งที่อยากทำให้สำเร็จใน 1 ปีนี้ (เป้าหมายหลัก):</label>
+              <label style={{ fontWeight: 'bold', fontSize: '13px', color: '#800000', display: 'block', marginBottom: '6px' }}>✍️ สิ่งที่อยากทำให้สำเร็จใน 1 ปีนี้ (เป้าหมายหลัก)</label>
               <textarea className="goal-input" placeholder="เช่น อยากเพิ่มรายได้ 20k/เดือน, อยากลดน้ำหนัก 5 kg, หรืออยากมีเวลาว่างเสาร์-อาทิตย์..." value={futureGoal} onChange={(e) => setFutureGoal(e.target.value)} style={{ minHeight: '70px', width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '13px', boxSizing: 'border-box' }} />
             </div>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '15px' }}>
-              <button className="secondary-btn" onClick={() => setStep('assess_current')} style={{ flex: '1 1 30%', padding: '10px' }}>กลับ</button>
-              <button className="primary-btn" onClick={() => {
-                    if(selectedFocusAreas.length === 0) { if(!window.confirm('คุณยังไม่ได้เลือกด้านที่จะโฟกัสเลย ต้องการวิเคราะห์ผลลัพธ์เลยหรือไม่?')) return; }
-                    if(!futureGoal.trim()) { alert("อย่าลืมพิมพ์เป้าหมายหลักของคุณในช่องด้านล่างนะครับ AI จะได้ช่วยวางแผนให้ตรงจุดครับ"); return; }
-                    setStep('result');
-                }} style={{ flex: '2 1 60%', padding: '10px', opacity: (selectedFocusAreas.length > 0 && futureGoal.trim().length > 0) ? 1 : 0.7 }}
+              {/* ✅ เรียกใช้ฟังก์ชัน handleGenerateResult เมื่อคลิกปุ่ม */}
+              <button className="primary-btn" onClick={handleGenerateResult} style={{ flex: '2 1 60%', padding: '10px', opacity: (selectedFocusAreas.length > 0 && futureGoal.trim().length > 0) ? 1 : 0.7 }}
               >สร้าง Wheel Of Life ของคุณ ✨</button>
             </div>
           </div>
@@ -575,17 +650,14 @@ function App() {
         )}
 
         {step === 'result' && (
-          // ✅ เปลี่ยนโครงสร้างใหม่เป็นแบบแยกกล่อง
           <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px', boxSizing: 'border-box' }}>
             
-            {/* 1. โลโก้ */}
             <img 
               src="/logo-analysis.png" 
               alt="Wheel Of Life Analysis" 
               style={{ width: '100%', maxWidth: '300px', display: 'block', margin: '0 auto' }} 
             />
             
-            {/* 2. กล่องกราฟ */}
             <div className="card" style={{ position: 'relative', padding: isMobile ? '20px 10px' : '30px', boxSizing: 'border-box', width: '100%' }}>
               
 <h3 style={{color: '#4A0000', margin: 0, fontSize: 'clamp(15px, 4vw, 18px)', textAlign: 'left'}}>🛞 ภาพ Wheel Of Life ของคุณ</h3>
@@ -593,7 +665,6 @@ function App() {
                   📤 แชร์
               </button>
               
-              {/* ✅ ใช้ aspectRatio คุมสัดส่วน ทำให้มันย่อขยายเป๊ะ 100% ไม่ยืดออกข้าง */}
               <div style={{ position: 'relative', width: '100%', maxWidth: '600px', margin: '0 auto', aspectRatio: isMobile ? '1 / 1.15' : '1 / 1' }}>
                  <Radar 
                     ref={chartRef} 
@@ -633,13 +704,10 @@ function App() {
               </div>
             </div>
 
-            {/* 3. กล่องรูปรถ */}
             <CarSimulation scores={currentScores} isMobile={isMobile} />
 
-            {/* 4. กล่องผลวิเคราะห์ AI และปุ่ม Action ต่างๆ */}
             <div className="card" style={{ padding: isMobile ? '20px' : '40px', boxSizing: 'border-box', width: '100%' }}>
               
-              {/* ปุ่มให้ AI วิเคราะห์ (จำกัดความกว้างไม่ให้ยืดเกินไป) */}
               <div style={{ maxWidth: '450px', margin: '0 auto', width: '100%' }}>
                 {!isAnalyzing ? (
                   <button className="primary-btn" onClick={analyzeWithAI} style={{ width: '100%' }}>✨ AI วิเคราะห์ผล & จัดตาราง 7 วัน</button>
@@ -651,7 +719,6 @@ function App() {
                 )}
               </div>
 
-              {/* กล่องผลวิเคราะห์ AI (ให้กว้างเต็ม Card) */}
               {aiAnalysis && (() => {
                 let beforePlan = aiAnalysis;
                 let actionPlan = "";
@@ -691,7 +758,6 @@ function App() {
                 );
               })()}
 
-              {/* ปุ่มกรอกอีเมลและกลับหน้าแรก (จำกัดความกว้างตรงกลาง) */}
               <div style={{ maxWidth: '450px', margin: '25px auto 0', width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div style={{ width: '100%' }}>
                   <input type="email" placeholder="กรอก Email เพื่อรับรีพอร์ตเก็บไว้..." value={email} onChange={(e) => setEmail(e.target.value)} className="goal-input" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '13px', boxSizing: 'border-box' }} />
@@ -709,7 +775,6 @@ function App() {
               </div>
             </div>
    
-            {/* 5. ปุ่มติดตามจัดตรงกลาง */}
             <div style={{ textAlign: 'center', marginTop: '10px', marginBottom: '20px' }}>
               <a href="https://linktr.ee/upskillwithfuii" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
                 <button style={{ backgroundColor: '#fff', border: '1px solid #ddd', color: '#666', padding: '8px 18px', borderRadius: '25px', fontSize: '13px', cursor: 'pointer', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '6px', justifyContent: 'center', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>

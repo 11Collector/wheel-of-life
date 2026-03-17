@@ -39,6 +39,27 @@ const Footer = () => (
   </div>
 );
 
+// ✅ เพิ่มฟังก์ชัน helper สำหรับคำนวณข้อความแบบตัดขึ้นบรรทัดใหม่
+const getWrappedLines = (ctx, text, maxWidth) => {
+  if (!text) return [];
+  const words = text.split(' ');
+  let currentLine = '';
+  const lines = [];
+
+  for (let i = 0; i < words.length; i++) {
+    const testLine = currentLine + words[i] + ' ';
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && i > 0) {
+      lines.push(currentLine.trim());
+      currentLine = words[i] + ' ';
+    } else {
+      currentLine = testLine;
+    }
+  }
+  lines.push(currentLine.trim());
+  return lines;
+};
+
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend, whiteBackgroundPlugin);
 
 const categoriesData = [
@@ -222,10 +243,10 @@ function CarSimulation({ scores, isMobile }) {
         }
     `;
 
-    const shareVehicleImage = async () => {
+    const saveVehicleImage = async () => {
       const canvas = document.createElement('canvas');
       canvas.width = 600;
-      canvas.height = 500;
+      canvas.height = 550; // ✅ เพิ่มความสูงเพื่อให้พอสำหรับข้อความ
       const ctx = canvas.getContext('2d');
 
       ctx.fillStyle = '#fdf2f2';
@@ -251,21 +272,32 @@ function CarSimulation({ scores, isMobile }) {
       ctx.fillStyle = statusColor;
       ctx.fillText(message.replace(/🚀|🚗|🚲|🚧|⚠️/g, '').trim(), canvas.width / 2, 330);
 
-      ctx.font = "20px Kanit, sans-serif";
-      ctx.fillStyle = "#444";
-      ctx.fillText(`พร้อมจะอัปสกิลชีวิตไปกับ Wheel of Life!`, canvas.width / 2, 380);
+      // ✅ ลบข้อความ promotional เดิม
+      // ✅ เพิ่มส่วนวาดคำอธิบาย โดยใช้ getWrappedLines เพื่อตัดขึ้นบรรทัดใหม่
+      ctx.save();
+      ctx.font = "16px Kanit, sans-serif"; // ✅ กำหนดขนาดฟอนต์ให้เล็กลง
+      ctx.fillStyle = "#555";
+      ctx.textAlign = "center";
+      const explanationX = canvas.width / 2;
+      const explanationMaxWidth = canvas.width - 80; // ✅ กำหนดความกว้างสูงสุด (หัก padding)
+      const wrappedLines = getWrappedLines(ctx, explanation, explanationMaxWidth);
+      
+      let explanationY = 370; // ✅ กำหนดจุดเริ่มต้นแกน Y ของคำอธิบาย
+      wrappedLines.forEach(line => {
+        ctx.fillText(line, explanationX, explanationY);
+        explanationY += 24; // ✅ ปรับช่องว่างระหว่างบรรทัด
+      });
+      ctx.restore();
 
       ctx.font = "600 18px Kanit, sans-serif";
       ctx.fillStyle = "#800000";
-      ctx.fillText("Created by อัพสกิลกับฟุ้ย", canvas.width / 2, 450);
+      ctx.fillText("Created by อัพสกิลกับฟุ้ย", canvas.width / 2, canvas.height - 40); // ✅ ขยับ Footer ขึ้นมานิดหน่อย
 
-      canvas.toBlob(async (blob) => {
-          const file = new File([blob], "my-vehicle.png", { type: "image/png" });
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-              try { await navigator.share({ title: 'My Life Vehicle', text: `พาหนะชีวิตของฉันคือ ${message} 🚗 มาประเมินชีวิตของคุณกัน!`, files: [file] }); } catch (error) {}
-          } else {
-              const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'my-vehicle.png'; link.click();
-          }
+      canvas.toBlob((blob) => {
+          const link = document.createElement('a'); 
+          link.href = URL.createObjectURL(blob); 
+          link.download = 'my-vehicle.png'; 
+          link.click();
       }, 'image/png');
     };
 
@@ -276,8 +308,8 @@ function CarSimulation({ scores, isMobile }) {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'space-between', width: '100%', alignItems: 'center', marginBottom: '15px' }}>
                 <h3 style={{color: '#4A0000', margin: 0, fontSize: 'clamp(15px, 4vw, 18px)', textAlign: 'left'}}>🚗 ภาพจำลองสมรรถนะชีวิต</h3>
                 
-                <button onClick={shareVehicleImage} style={{ backgroundColor: '#fff', border: '1px solid #800000', color: '#800000', padding: '6px 14px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold', flexShrink: 0, whiteSpace: 'nowrap' }}>
-                    📤 แชร์
+                <button onClick={saveVehicleImage} style={{ backgroundColor: '#fff', border: '1px solid #800000', color: '#800000', padding: '6px 14px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold', flexShrink: 0, whiteSpace: 'nowrap' }}>
+                    💾
                 </button>
             </div>
             
@@ -332,22 +364,19 @@ function App() {
     }
   };
 
-  // ✅ ฟังก์ชันใหม่: เซฟข้อมูลทันทีที่กด "สร้าง Wheel Of Life"
   const handleGenerateResult = async () => {
     if(selectedFocusAreas.length === 0) { if(!window.confirm('คุณยังไม่ได้เลือกด้านที่จะโฟกัสเลย ต้องการวิเคราะห์ผลลัพธ์เลยหรือไม่?')) return; }
     if(!futureGoal.trim()) { alert("อย่าลืมพิมพ์เป้าหมายหลักของคุณในช่องด้านล่างนะครับ AI จะได้ช่วยวางแผนให้ตรงจุดครับ"); return; }
     
-    // เปลี่ยนหน้าไปโชว์กราฟทันที (UX จะได้ไม่สะดุด)
     setStep('result');
 
-    // เซฟลง Database เบื้องหลัง
     try {
       const docRef = await addDoc(collection(db, "user_reports"), { 
         email: "", 
         currentScores, 
         targetScores, 
         selectedFocusAreas, 
-        analysis: "", // ปล่อยว่างไว้ก่อน รอ AI มาเติม
+        analysis: "", 
         goal: futureGoal, 
         timestamp: serverTimestamp(), 
         platform: 'upskillwheel_v2' 
@@ -364,7 +393,6 @@ function App() {
     setIsSendingEmail(true);
     try {
       if (reportDocId) {
-        // ✅ Double Save: อัปเดตทั้ง Email และ ผล AI ไปพร้อมกันเลย กันพลาด!
         const reportRef = doc(db, "user_reports", reportDocId);
         await updateDoc(reportRef, { 
            email: email, 
@@ -413,7 +441,6 @@ function App() {
       const generatedAnalysis = data.candidates[0].content.parts[0].text;
       setAiAnalysis(generatedAnalysis);
 
-      // ✅ อัปเดตข้อมูลแถวเดิม เติมผล AI เข้าไป
       if (reportDocId) {
         try {
           const reportRef = doc(db, "user_reports", reportDocId);
@@ -443,7 +470,7 @@ function App() {
     }
   };
 
-  const shareChartImage = async () => {
+  const saveChartImage = async () => {
     if (!chartRef.current) return;
     const canvas = chartRef.current.canvas;
     const tempCanvas = document.createElement('canvas');
@@ -466,22 +493,11 @@ function App() {
     tCtx.textAlign = "center";
     tCtx.fillText("Created by อัพสกิลกับฟุ้ย", tempCanvas.width / 2, tempCanvas.height - 25);
     
-    tempCanvas.toBlob(async (blob) => {
-        const file = new File([blob], "wheel-of-life.png", { type: "image/png" });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-                await navigator.share({
-                    title: 'My Wheel of Life',
-                    text: `เป้าหมายปีนี้ของฉันคือ: ${futureGoal} 🎯\nมาลองประเมินสมดุลชีวิตกัน!`,
-                    files: [file]
-                });
-            } catch (error) { console.log('Share canceled or failed', error); }
-        } else {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'my-life-wheel.png';
-            link.click();
-        }
+    tempCanvas.toBlob((blob) => {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'my-life-wheel.png';
+        link.click();
     }, 'image/png');
   };
 
@@ -512,7 +528,6 @@ function App() {
           <div className="card">
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-    {/* ปุ่มลูกศรกลับหน้าแรก */}
     <button 
       onClick={() => setStep('home')} 
       style={{ background: 'none', border: 'none', color: '#999', fontSize: '18px', cursor: 'pointer', padding: '0 5px 0 0' }}
@@ -551,7 +566,6 @@ function App() {
           <div className="card">
            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-    {/* ปุ่มลูกศรกลับหน้าแรก */}
     <button 
       onClick={() => setStep('assess_current')} 
       style={{ background: 'none', border: 'none', color: '#999', fontSize: '18px', cursor: 'pointer', padding: '0 5px 0 0' }}
@@ -630,7 +644,6 @@ function App() {
             </div>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '15px' }}>
-              {/* ✅ เรียกใช้ฟังก์ชัน handleGenerateResult เมื่อคลิกปุ่ม */}
               <button className="primary-btn" onClick={handleGenerateResult} style={{ flex: '2 1 60%', padding: '10px', opacity: (selectedFocusAreas.length > 0 && futureGoal.trim().length > 0) ? 1 : 0.7 }}
               >สร้าง Wheel Of Life ของคุณ ✨</button>
             </div>
@@ -661,8 +674,8 @@ function App() {
             <div className="card" style={{ position: 'relative', padding: isMobile ? '20px 10px' : '30px', boxSizing: 'border-box', width: '100%' }}>
               
 <h3 style={{color: '#4A0000', margin: 0, fontSize: 'clamp(15px, 4vw, 18px)', textAlign: 'left'}}>🛞 ภาพ Wheel Of Life ของคุณ</h3>
-<button onClick={shareChartImage} style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 10, backgroundColor: '#fff5f5', border: '1px solid #ffcccc', color: '#800000', padding: '6px 14px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}>
-                  📤 แชร์
+<button onClick={saveChartImage} style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 10, backgroundColor: '#fff5f5', border: '1px solid #ffcccc', color: '#800000', padding: '6px 14px', borderRadius: '20px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}>
+                  💾
               </button>
               
               <div style={{ position: 'relative', width: '100%', maxWidth: '600px', margin: '0 auto', aspectRatio: isMobile ? '1 / 1.15' : '1 / 1' }}>

@@ -774,7 +774,7 @@ function App() {
               <div style={{ maxWidth: '450px', margin: '25px auto 0', width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
              <div style={{ width: '100%', textAlign: 'center' }}>
                   <p style={{ fontSize: '13.5px', color: '#555', marginBottom: '12px', lineHeight: '1.5' }}>
-                    อยากรู้ไหมว่าผลลัพธ์นี้บอกอะไรคุณบ้าง?<br/>ทักมาคุยเพื่อวิเคราะห์จุดแข็งและก้าวต่อไปกันครับ 👇
+                    ถ้าคุณไม่อยากอยู่จุดเดิมอีก 3 เดือนข้างหน้า?<br/>
                   </p>
                   <a href="https://lin.ee/rQawKUM" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
                     <button style={{ 
@@ -793,7 +793,7 @@ function App() {
                       gap: '8px',
                       boxShadow: '0 4px 10px rgba(0, 185, 0, 0.2)'
                     }}>
-                      💬 รับคำแนะนำเพิ่มเติม
+                      💬 วางแผนต่อเฉพาะคุณ
                     </button>
                   </a>
                 </div>

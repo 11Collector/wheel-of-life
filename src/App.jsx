@@ -1,4 +1,4 @@
-import emailjs from '@emailjs/browser';
+
 import { db } from './firebase'; 
 import { collection, addDoc, serverTimestamp, getDocs, query, orderBy, doc, updateDoc } from 'firebase/firestore'; 
 
@@ -772,16 +772,30 @@ function App() {
               })()}
 
               <div style={{ maxWidth: '450px', margin: '25px auto 0', width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div style={{ width: '100%' }}>
-                  <input type="email" placeholder="กรอก Email เพื่อรับรีพอร์ตเก็บไว้..." value={email} onChange={(e) => setEmail(e.target.value)} className="goal-input" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '13px', boxSizing: 'border-box' }} />
-                  
-                  <div style={{ marginTop: '10px' }}>
-                      {!isSendingEmail ? (
-                        <button className="primary-btn" onClick={sendReportViaEmail} style={{ width: '100%', padding: '10px' }}>📧 ส่งรีพอร์ตเข้า Email</button>
-                      ) : (
-                        <div style={{ textAlign: 'center', padding: '10px', backgroundColor: '#fff5f5', borderRadius: '10px', border: '2px dashed #f08080' }}><div className="lds-dual-ring-small"></div><p className="blinking-text" style={{ fontSize: '12px', color: '#800000', margin: 0 }}>กำลังส่ง...</p></div>
-                      )}
-                  </div>
+             <div style={{ width: '100%', textAlign: 'center' }}>
+                  <p style={{ fontSize: '13.5px', color: '#555', marginBottom: '12px', lineHeight: '1.5' }}>
+                    อยากรู้ไหมว่าผลลัพธ์นี้บอกอะไรคุณบ้าง?<br/>ทักมาคุยเพื่อวิเคราะห์จุดแข็งและก้าวต่อไปกันครับ 👇
+                  </p>
+                  <a href="https://lin.ee/rQawKUM" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                    <button style={{ 
+                      width: '100%', 
+                      padding: '12px', 
+                      backgroundColor: '#00B900', /* สีเขียวเอกลักษณ์ของ LINE */
+                      color: 'white', 
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '15px', 
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      display: 'flex', 
+                      justifyContent: 'center', 
+                      alignItems: 'center', 
+                      gap: '8px',
+                      boxShadow: '0 4px 10px rgba(0, 185, 0, 0.2)'
+                    }}>
+                      💬 ปรึกษาผลลัพธ์และอัปสกิลชีวิต (ฟรี)
+                    </button>
+                  </a>
                 </div>
 
                 <button className="secondary-btn" onClick={() => setStep('home')} style={{ width: '100%', padding: '10px' }}>กลับหน้าแรก</button>

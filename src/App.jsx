@@ -771,8 +771,8 @@ function App() {
                 );
               })()}
 
-              <div style={{ maxWidth: '450px', margin: '25px auto 0', width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-             <div style={{ width: '100%', textAlign: 'center' }}>
+                <div style={{ maxWidth: '450px', margin: '25px auto 0', width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ width: '100%', textAlign: 'center' }}>
                   <p style={{ fontSize: '13.5px', color: '#555', marginBottom: '12px', lineHeight: '1.5' }}>
                     ถ้าคุณไม่อยากอยู่จุดเดิมอีก 3 เดือนข้างหน้า?<br/>
                   </p>
@@ -798,7 +798,31 @@ function App() {
                   </a>
                 </div>
 
-                <button className="secondary-btn" onClick={() => setStep('home')} style={{ width: '100%', padding: '10px' }}>กลับหน้าแรก</button>
+                {/* ✅ อัปเดตลิงก์และ Emoji ให้สอดคล้อง ✅ */}
+                <div style={{ display: 'flex', gap: '10px', width: '100%', marginTop: '4px' }}>
+                  <a href="https://disc-office.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', flex: 1 }}>
+                    <button style={{ 
+                      width: '100%', padding: '10px', backgroundColor: '#fff', color: '#800000', 
+                      border: '1px solid #800000', borderRadius: '8px', fontSize: '13.5px', 
+                      fontWeight: 'bold', cursor: 'pointer', display: 'flex', justifyContent: 'center', 
+                      alignItems: 'center', gap: '6px', boxShadow: '0 2px 5px rgba(128, 0, 0, 0.05)' 
+                    }}>
+                      🧩 เช็กตัวตน
+                    </button>
+                  </a>
+                  <a href="https://money-avatar.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', flex: 1 }}>
+                    <button style={{ 
+                      width: '100%', padding: '10px', backgroundColor: '#fff', color: '#E65100', 
+                      border: '1px solid #E65100', borderRadius: '8px', fontSize: '13.5px', 
+                      fontWeight: 'bold', cursor: 'pointer', display: 'flex', justifyContent: 'center', 
+                      alignItems: 'center', gap: '6px', boxShadow: '0 2px 5px rgba(230, 81, 0, 0.05)' 
+                    }}>
+                      💰 ถอดสไตล์การเงิน
+                    </button>
+                  </a>
+                </div>
+
+                <button className="secondary-btn" onClick={() => setStep('home')} style={{ width: '100%', padding: '10px', marginTop: '8px' }}>กลับหน้าแรก</button>
               </div>
             </div>
    

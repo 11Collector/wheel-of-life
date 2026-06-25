@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://www.upskilleveryday.com/tools/wheel-of-life",
+      "permanent": true
+    }
+  ]
+}
